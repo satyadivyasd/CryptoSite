@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+    <div style="width: 80%; margin: auto;">
+        <canvas id="stockChart" width="400" height="200"></canvas>
+    </div>
+    <script>
+        var ctx = document.getElementById('stockChart').getContext('2d');
+        var stockData = JSON.parse('{{ stock_data_list|safe }}');  // Convert Python list to JSON
+        <h2>sd</h2>
+        var dates = stockData.map(function(data) {
+            var date = new Date(data.date);
+            return date.toLocaleString('default', { month: 'long' });
+        });
+
+        var stockRates = stockData.map(function(data) {
+            return data.stock_rate;
+        });
+
+        var chartData = {
+            labels: dates,
+            datasets: [{
+                label: 'Stock Rates',
+                data: stockRates,
+                borderColor: 'rgb(75, 192, 192)',
+                borderWidth: 1,
+                fill: false
+            }]
+        };
+
+        var chartOptions = {
+            scales: {
+                x: {
+                    type: 'category',
+                    labels: dates
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        };
+
+        var stockChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions
+        });
+    </script>
+{% endblock %}

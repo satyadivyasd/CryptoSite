@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Home{% endblock %}</title>
+
+    <!-- Link Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'Uni_app/styles.css' %}" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">CryptoSite</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Explore</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Individual</a>
+      </li>
+    </ul>
+    <span class="navbar-text">
+      <button class="btn btn-primary">Signin</button>
+      <button class="btn btn-primary" href="">Singup</button>
+
+    </span>
+  </div>
+</nav>
+
+    <!-- Link Bootstrap JS (optional, for dropdown functionality) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% block content %}
+        <!-- Default content for child templates goes here -->
+        {% endblock %}
+{#    <footer class="footer">#}
+{#        <div class="container">#}
+{#            <p>&copy; 2023 Your Company. All rights reserved.</p>#}
+{#        </div>#}
+{#    </footer>#}
+</body>
+
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>

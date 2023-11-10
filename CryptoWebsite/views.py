@@ -1,30 +1,12 @@
-import requests
-from django.http import JsonResponse
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth
 from django.shortcuts import render
-
-
-def CurrencyExchange(request):
-    base_currency = request.GET.get('base', 'USD')  # Default base currency is USD
-    target_currency = request.GET.get('target', 'EUR')  # Default target currency is EUR
-
-    api_url = f'https://api.exchangeratesapi.io/latest?base={base_currency}&symbols={target_currency}'
-
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        data = response.json()
-        print(data)
-        return JsonResponse(data)
-    else:
-        return JsonResponse({'error': 'Unable to fetch currency exchange rate'}, status=500)
-
-
-# views.py
 import requests
 from django.http import JsonResponse
-
-import requests
-from django.http import JsonResponse
-
+import plotly.express as px
+import calendar
+from .forms import DateForm
+from .models import StockData
 
 def convert_currency(request, amount, from_currency, to_currency):
     payload = {}
@@ -45,3 +27,42 @@ def convert_currency(request, amount, from_currency, to_currency):
 
     else:
         return JsonResponse({'success': False, 'error': 'Failed to retrieve data from the API'})
+
+def monthly_stock_data(request):
+    # Get monthly aggregated stock data
+    stock_data_list = StockData.objects.all().order_by('date').asc
+    # Process stock_data_list to get data for the chart
+    context = {
+        'stock_data_list': stock_data_list,
+    }
+    return render(request, 'monthly_stock_data.html', context)
+
+def home(request):
+    return render(request,'home.html')
+# Create your views here.
+def chart(request):
+    # start = request.GET.get('start')
+    # end = request.GET.get('end')
+
+    co2 = StockData.objects.all().order_by('date')
+    # if start:
+    #     co2 = co2.filter(date__gte=start)
+    # if end:
+    #     co2 = co2.filter(date__lte=end)
+
+    fig = px.line(
+        x=[c.date for c in co2],
+        y=[c.stock_rate for c in co2],
+        # title="CO2 PPM",
+        # labels={'x': 'Date', 'y': 'CO2 PPM'}
+    )
+
+    fig.update_layout(
+        title={
+            'font_size': 24,
+            'xanchor': 'center',
+            'x': 0.5
+    })
+    chart = fig.to_html()
+    context = {'chart': chart, 'form': DateForm()}
+    return render(request, 'chart.html', context)

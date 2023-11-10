@@ -19,8 +19,11 @@ from django.urls import path
 from CryptoWebsite import views
 
 urlpatterns = [
-    # path('', views.home, name='home'),  # Assuming 'home' is the name of your view function for the root path
-    # path('admin/', admin.site.urls),
+    # path('', admin.site.urls),  # Assuming 'home' is the name of your view function for the root path
+    path('admin/', admin.site.urls),
+    path("",views.home,name='home'),
     path('convert_currency/<int:amount>/<str:from_currency>/<str:to_currency>/', views.convert_currency, name='convert_currency'),
+    path('monthly_stock_data',views.monthly_stock_data,name='monthly_stock_data'),
+    path('chart',views.chart,name='chart')
 ]
 
