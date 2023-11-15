@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login / Forgot Password</title>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://img.freepik.com/premium-photo/3d-cryptocurrency-rendering-design_23-2149074566.jpg?w=826'); /* Use the same background image as the registration form */
+            background-size: cover;
+            background-position: right;
+            margin: 40;
+            padding: 40;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .login-form {
+            width: 80%;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: ##AA98A9;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+
+        .forgot-password-link {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .forgot-password-fields {
+            display: none;
+            text-align: center;
+        }
+
+        .forgot-password-fields h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+
+        .registration-link {
+            text-align: center;
+        }
+
+        .registration-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Login</h2>
+    <form class="login-form" action="login-action.php" method="post">
+        <input type="email" id="email" name="email" placeholder="Email Address" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+        <div class="forgot-password-link">
+            <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+        </div>
+    </form>
+
+    <div class="forgot-password-fields" id="forgotPasswordFields">
+        <h3>Forgot Password</h3>
+        <form class="forgot-password-form" action="forgot-password-action.php" method="post">
+            <input type="email" id="forgotEmail" name="forgotEmail" placeholder="Email Address" required>
+            <button type="submit">Reset Password</button>
+        </form>
+    </div>
+
+    <div class="registration-link">
+        <a href="registration.html">Not registered? Register here</a>
+    </div>
+</div>
+
+<script>
+    function showForgotPassword() {
+        const loginForm = document.querySelector('.login-form');
+        const forgotPasswordFields = document.getElementById('forgotPasswordFields');
+
+        if (loginForm) {
+            loginForm.style.display = 'none';
+        }
+
+        if (forgotPasswordFields) {
+            forgotPasswordFields.style.display = 'block';
+        }
+    }
+</script>
+</body>
+</html>
