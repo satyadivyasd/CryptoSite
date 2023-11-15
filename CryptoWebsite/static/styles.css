@@ -1,0 +1,50 @@
+.list-group-item
+{
+    color: black;
+    font-size: 20px;
+    font-weight: normal;
+
+}
+.footer {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            text-align: center; 
+            padding-block-end: 50px;
+        }
+.nav-item{
+    font-size: large;
+    font-weight: bold;
+
+}
+.custom-navbar {
+    background-color: orange;
+}
+.dropdown-item:hover
+{
+    background-color: black;
+    color:ghostwhite;
+    border-top-left-radius: 0.3px;
+}
+h2
+{
+    padding-top: 40px;
+    text-align: justify;
+    font-family: 'Lucida Grande', Arial, sans-serif;
+    font-style: normal;
+    font-weight: bolder;
+    color: yellow;
+    
+}
+.row{
+    height: 50%;
+}
+.col{
+    height: 80%;
+}
+.nav-link {
+color: white;
+}
+.mt-4{
+    padding-top: 60px;
+}
+

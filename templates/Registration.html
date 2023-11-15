@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-Step Registration</title>
+    <style>
+         body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://img.freepik.com/premium-photo/3d-cryptocurrency-rendering-design_23-2149074566.jpg?w=826');
+            background-size: cover;
+            background-position: right;
+            margin: 40;
+            padding: 40;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: space-between;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        #progressbar {
+            width: 50%;
+            height: 10px;
+            background-color: #ccc;
+        }
+
+        #progress {
+            width: 0;
+            height: 100%;
+            background-color: #4CAF50;
+        }
+
+        .profile-photo-upload {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .profile-photo-upload label {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .profile-photo-upload label img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-photo-upload input[type="file"] {
+            display: none;
+        }
+
+        .watermark-input {
+            background: #f7f7f7;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            width: 100%;
+            position: relative;
+        }
+
+        .watermark-input label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            pointer-events: none;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .watermark-input input {
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="progressbar">
+        <div id="progress"></div>
+    </div>
+    <form id="registrationForm">
+        <div class="step active" data-step="1">
+            <h2>Step 1: Profile Information</h2>
+            <div class="profile-photo-upload">
+                <label for="profilePhoto">
+                    <img src="default-profile.jpg" alt="Profile Photo">
+                </label>
+                <input type="file" id="profilePhoto">
+            </div>
+            <div class="watermark-input">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" required>
+            </div>
+            <div class="watermark-input">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="watermark-input">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="button" onclick="nextStep(1)">Next</button>
+        </div>
+        <div class="step" data-step="2">
+            <h2>Step 2: Contact Information</h2>
+            <div class="watermark-input">
+                <label for="country">Country</label>
+                <input type="text" id="country" required>
+            </div>
+            <div class="watermark-input">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <button type="button" onclick="nextStep(2)">Next</button>
+        </div>
+        <div class="step" data-step="3">
+            <h2>Step 3: Thank You</h2>
+            <p>Thank you for registration.</p>
+            <p><a href="form.html">Login</a></p>
+            <p><a href="profile.html">Profile Page</a></p>
+            <p><a href="home.html">Home Page</a></p>
+        </div>
+    </form>
+</div>
+
+<script>
+    let currentStep = 1;
+    const progressBar = document.getElementById('progress');
+    const steps = document.querySelectorAll('.step');
+    const totalSteps = steps.length;
+
+    function nextStep(step) {
+        if (step === currentStep && currentStep < totalSteps) {
+            currentStep++;
+            updateProgress();
+        }
+    }
+
+    function updateProgress() {
+        const stepWidth = (currentStep - 1) / (totalSteps - 1) * 100 + '%';
+        progressBar.style.width = stepWidth;
+
+        steps.forEach((step, index) => {
+            step.classList.toggle('active', index + 1 === currentStep);
+        });
+    }
+
+    // Handle the profile photo file input change event
+    const profilePhotoInput = document.getElementById('profilePhoto');
+    const profilePhotoLabel = document.querySelector('.profile-photo-upload label img');
+
+    profilePhotoInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (allowedTypes.includes(file.type)) {
+                const url = URL.createObjectURL(file);
+                profilePhotoLabel.src = url;
+            } else {
+                alert('Please select a valid image file (JPEG, PNG, or GIF).');
+                profilePhotoInput.value = ''; // Reset the file input
+            }
+        }
+    });
+</script>
+</body>
+</html>
