@@ -5,6 +5,11 @@
     font-weight: normal;
 
 }
+.container-with-border {
+            border-bottom: 1px solid #ddd; /* Adjust border style and color as needed */
+            margin-top: 1.5rem; /* Same as mt-4 in Bootstrap (1rem = 16px) */
+            padding-bottom: 1.5rem; /* Add padding to match the border thickness */
+        }
 .footer {
             background-color: #f8f9fa;
             padding: 20px 0;
@@ -16,35 +21,40 @@
     font-weight: bold;
 
 }
-.custom-navbar {
-    background-color: orange;
-}
 .dropdown-item:hover
 {
     background-color: black;
     color:ghostwhite;
     border-top-left-radius: 0.3px;
 }
-h2
-{
-    padding-top: 40px;
-    text-align: justify;
-    font-family: 'Lucida Grande', Arial, sans-serif;
-    font-style: normal;
-    font-weight: bolder;
-    color: yellow;
-    
-}
+
 .row{
     height: 50%;
+    border-top-left-radius: 4px;
+    /*border-bottom-color: black;*/
+    border: black;
+
 }
 .col{
     height: 80%;
 }
 .nav-link {
-color: white;
+    color: white;
+    font-size: larger;
 }
+
 .mt-4{
     padding-top: 60px;
 }
 
+h1
+{
+    padding-top: 150px;
+    /*text-align: justify;*/
+    text-align: -webkit-center;
+    font-family: 'Lucida Grande', Arial, sans-serif;
+    font-style: normal;
+    font-weight: bolder;
+    color: darkslategrey;
+
+}

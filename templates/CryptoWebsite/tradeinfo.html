@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'CryptoWebsite/base.html' %}
 
 {% block title %}Courses{% endblock %}
 
@@ -8,7 +8,7 @@
     <div class="row">
         <!-- First Column -->
         <div class="col-md-6">
-            <h1>Currency Name</h1>
+            <h2>Currency Name</h2>
             <!-- Add content for the first column as needed -->
         </div>
 
@@ -21,7 +21,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     {% for c in currencies %}
-                        <a class="dropdown-item" href="#">{{ c.name }}</a><br>
+                        <a class="dropdown-item" href={% url 'convert_currency' amount=price from_currency=fromcurrency to_currency={{ c.name }} %}>{{ c.name }}</a><br>
                         {% empty %}
                         <a class="nav-item-dropdown text-muted">No courses available</a>
                         {% endfor %}
