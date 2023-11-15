@@ -113,7 +113,7 @@ def crypto_data(request):
         return render(request, 'error.html', {'error_message': f'Request error: {str(e)}'})
 
 
-def paymentHistory(request):
-    paymentHistory = get_object_or_404(PaymentHistory)
-    print("paymentHistory list is fetched.")
-    return render(request, 'paymentHistory.html', {'paymentHistoryDetails' : paymentHistory})
+# def paymentHistory(request):
+#     paymentHistory = get_object_or_404(PaymentHistory)
+#     print("paymentHistory list is fetched.")
+#     return render(request, 'paymentHistory.html', {'paymentHistoryDetails' : paymentHistory})
