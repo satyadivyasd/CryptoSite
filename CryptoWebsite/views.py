@@ -1,12 +1,12 @@
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 import requests
 from django.http import JsonResponse
 import plotly.express as px
 import calendar
 from .forms import DateForm
-from .models import StockData
+from .models import StockData, PaymentHistory
 
 def convert_currency(request, amount, from_currency, to_currency):
     payload = {}
@@ -66,3 +66,7 @@ def chart(request):
     chart = fig.to_html()
     context = {'chart': chart, 'form': DateForm()}
     return render(request, 'chart.html', context)
+
+def paymentHistory(request):
+    paymentHistory = get_object_or_404(PaymentHistory)
+    return render(request, 'paymentHistory.html', {'paymentHistoryDetails' : paymentHistory})
