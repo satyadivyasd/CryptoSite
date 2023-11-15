@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import plotly.express as px
 import calendar
 from .forms import DateForm
-from .models import StockData
+from .models import StockData,Currency
 
 def convert_currency(request, amount, from_currency, to_currency):
     payload = {}
@@ -18,8 +18,10 @@ def convert_currency(request, amount, from_currency, to_currency):
     status_code = response.status_code
     data = response.json()
     converted_amount = data.get('result', None)
+    c=Currency.objects.all()
     result = {
-        'converted_amount': converted_amount
+        'converted_amount': converted_amount,
+        'currencies':c,
     }
     if response.status_code == 200:
         return render(request, 'tradeinfo.html', result)
@@ -66,3 +68,46 @@ def chart(request):
     chart = fig.to_html()
     context = {'chart': chart, 'form': DateForm()}
     return render(request, 'chart.html', context)
+
+
+# views.py
+from django.shortcuts import render
+import requests
+
+def crypto_data(request):
+    # Replace 'bitcoin' with the desired cryptocurrency symbol or ID
+    crypto_symbol = 'bitcoin'
+
+    # CoinGecko API endpoint for cryptocurrency data
+    api_url = f'https://api.coingecko.com/api/v3/coins/{crypto_symbol}'
+
+    try:
+        # Make a GET request to the CoinGecko API
+        response = requests.get(api_url)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Parse the JSON data from the response
+            crypto_info = response.json()
+
+            # Extract relevant data from the JSON response
+            crypto_name = crypto_info['name']
+            crypto_price = crypto_info['market_data']['current_price']['usd']
+            crypto_market_cap = crypto_info['market_data']['market_cap']['usd']
+
+            # You can pass this data to the template or use it as needed
+            context = {
+                'crypto_name': crypto_name,
+                'crypto_price': crypto_price,
+                'crypto_market_cap': crypto_market_cap,
+            }
+
+            return render(request, 'crypto_data.html', context)
+
+        else:
+            # If the request was not successful, handle the error
+            return render(request, 'error.html', {'error_message': 'Failed to retrieve crypto data'})
+
+    except requests.RequestException as e:
+        # Handle any exceptions that might occur during the request
+        return render(request, 'error.html', {'error_message': f'Request error: {str(e)}'})

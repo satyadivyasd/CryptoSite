@@ -24,6 +24,8 @@ urlpatterns = [
     path("",views.home,name='home'),
     path('convert_currency/<int:amount>/<str:from_currency>/<str:to_currency>/', views.convert_currency, name='convert_currency'),
     path('monthly_stock_data',views.monthly_stock_data,name='monthly_stock_data'),
-    path('chart',views.chart,name='chart')
+    path('chart',views.chart,name='chart'),
+    path('data',views.crypto_data,name='data')
+
 ]
 
