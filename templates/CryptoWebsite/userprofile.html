@@ -1,0 +1,12 @@
+<!-- userprofile.html in your templates/registration directory -->
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block content %}
+  <h2>User Profile</h2>
+  <p>Welcome, {{ user_profile.user.username }}!</p>
+  {% if user_profile.profile_image %}
+    <img src="{{ user_profile.profile_image.url }}" alt="Profile Image">
+  {% else %}
+    <p>No profile image uploaded.</p>
+  {% endif %}
+{% endblock %}

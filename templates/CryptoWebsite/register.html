@@ -1,0 +1,49 @@
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block content %}
+{#    <h2>Register</h2>#}
+  <div class="container mt-4 d-flex justify-content-center align-items-center">
+
+    <form method="post" enctype="multipart/form-data" class="d-flex flex-column">
+      {% csrf_token %}
+        {% if user_errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ user_errors }}
+        </div>
+      {% endif %}
+    {% if profile_errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ profile_errors }}
+        </div>
+      {% endif %}
+        <h2 class="text-center mb-4">Register</h2>
+      <table class="table">
+        <tbody>
+          <tr>
+            <th>{{ user_form.username.label_tag }}</th>
+            <td>{{ user_form.username }}</td>
+          </tr>
+          <tr>
+            <th>{{ user_form.email.label_tag }}</th>
+            <td>{{ user_form.email }}</td>
+          </tr>
+          <tr>
+            <th>{{ user_form.password1.label_tag }}</th>
+            <td>{{ user_form.password1 }}</td>
+          </tr>
+          <tr>
+            <th>{{ user_form.password2.label_tag }}</th>
+            <td>{{ user_form.password2 }}</td>
+          </tr>
+           <tr>
+            <th>{{ profile_form.profile_image.label_tag }}</th>
+            <td>{{ profile_form.profile_image }}</td>
+          </tr>
+          {# Include profile form fields here if applicable #}
+
+        </tbody>
+      </table>
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </div>
+{% endblock %}
