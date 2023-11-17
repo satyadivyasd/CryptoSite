@@ -19,29 +19,26 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from CryptoWebsite import views
-from CryptoWebsite.views import FetchStockDataView, CryptoDataView, stocks, crypto_volume_chart
+# from CryptoWebsite.views import FetchStockDataView, CryptoDataView, stocks, crypto_volume_chart
 
 urlpatterns = [
     # path('', admin.site.urls),  # Assuming 'home' is the name of your view function for the root path
     path('admin/', admin.site.urls),
     path("",views.home,name='home'),
-    path('convert_currency/<int:amount>/<str:from_currency>/<str:to_currency>/', views.convert_currency, name='convert_currency'),
+    path('convert_currency/<str:amount>/<str:from_currency>/<str:to_currency>/', views.convert_currency, name='convert_currency'),
     # path('monthly_stock_data',views.monthly_stock_data,name='monthly_stock_data'),
-    path('chart',views.chart,name='chart'),
+    path('stockinfo/<path:stockname>/',views.stockinfo,name='stockinfo'),
     path('data',views.data,name='data'),
-    # path('stocks',views.stocks,name='stocks'),
-    # path('stocks/', stocks.as_view(), name='stocks'),
-    path('graph/', crypto_volume_chart, name='crypto_volume_chart'),
     path('register/',views.register,name='register'),
     path('login/',views.user_login,name='login'),
     path('logout/', views.user_logout, name='logout'),
 
     path('myaccount/', views.myaccount, name='myaccount'),
-    path('generate_graph',views.generate_graph,name='generate_graph'),
-    path('fetch_stock_data/', FetchStockDataView.as_view(), name='fetch_stock_data'),
+    # path('generate_graph',views.generate_graph,name='generate_graph'),
+    # path('fetch_stock_data/', FetchStockDataView.as_view(), name='fetch_stock_data'),
     # path('last-year-crypto-data/', LastYearCryptoDataView.as_view(), name='last_year_crypto_data'),
 
-    path('crypto-data/', CryptoDataView.as_view(), name='crypto_data'),
+    # path('crypto-data/', CryptoDataView.as_view(), name='crypto_data'),
 
 ]
 
