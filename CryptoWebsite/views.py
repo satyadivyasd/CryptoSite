@@ -7,20 +7,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 import plotly.express as px
-from django.views import View
 import requests
 from django.shortcuts import render
-import matplotlib.pyplot as plt
-from io import BytesIO
-import base64
+
 
 from django.urls import reverse
-
-from IADSProject.settings import CHART
-from .forms import DateForm
-from .models import StockData, Currency
+from .models import StockData, Currency, Payment
 from django.contrib.auth.decorators import login_required
-from .forms import RegistrationForm, UserProfileForm
+from .forms import RegistrationForm, UserProfileForm, PaymentForm
 
 
 def convert_currency(request, amount, from_currency, to_currency):
@@ -39,9 +33,11 @@ def convert_currency(request, amount, from_currency, to_currency):
         'currencies': c,
         'price':amount,
         'STOCK_NAME':settings.STOCK_NAME,
-        'CHART':settings.CHART
+        'CHART':settings.CHART,
+        'PREV_CODE':to_currency
     }
     settings.CONVERSION_AMOUNT=converted_amount
+    settings.PREV_CODE=from_currency
     if response.status_code == 200:
         return render(request, 'CryptoWebsite/tradeinfo.html', result)
 
@@ -91,7 +87,8 @@ def stockinfo(request, stockname):
         context = {'CHART': chart,
                    'CONVERSION_AMOUNT': data.price,
                    'STOCK_NAME': stockname,
-                   'currencies': currencies
+                   'currencies': currencies,
+                   'PREV_CODE':settings.PREV_CODE
                    }
     else:
         context = {
@@ -150,7 +147,6 @@ def user_login(request):
 
 @login_required
 def myaccount(request):
-    # Get the current user's profile
     user_profile = request.user.userprofile
 
     return render(request, 'CryptoWebsite/userprofile.html', {'user_profile': user_profile})
@@ -225,3 +221,77 @@ def data(request):
         ]
     print(cryptocurrencies)
     return render(request, 'CryptoWebsite/home.html', {'cryptocurrencies': cryptocurrencies})
+
+def stocks(request):
+    # CoinMarketCap API endpoint for cryptocurrency listings
+    api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+    # Add your CoinMarketCap API key here
+    api_key = '3ebb690c-aa21-4b14-bcd7-c84b1b48420e'
+
+    # Define parameters for the API request
+    params = {
+        'start': '1',
+        'limit': '20',
+        'convert': 'USD'
+    }
+
+    # Set headers, including the API key
+    headers = {
+        'Accepts': 'application/json',
+        'X-CMC_PRO_API_KEY': api_key,
+    }
+
+    # Make the API request
+    response = requests.get(api_url, headers=headers, params=params)
+
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        # Extract relevant information from the response
+        cryptocurrencies = [
+            {
+                'name': crypto['name'],
+                'symbol': crypto['symbol'],
+                'price': '${:,.2f}'.format(crypto['quote']['USD']['price']),
+                'market_cap': '${:,.2f}'.format(crypto['quote']['USD']['market_cap']),
+                'change_percentage': '{:.2f}'.format(crypto['quote']['USD']['percent_change_24h']),
+            }
+            for crypto in data['data']
+        ]
+    else:
+        # If the API request fails, provide some default data or handle the error as needed
+        cryptocurrencies = [
+            {"name": "Bitcoin", "symbol": "BTC", "price": "$60,000", "market_cap": "$1.2 Trillion",
+             "change_percentage": "+5"},
+            # Add more default cryptocurrencies as needed
+        ]
+
+    return render(request, 'CryptoWebsite/stocks.html', {'cryptocurrencies': cryptocurrencies})
+
+def make_payment(request):
+    if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            # Process the payment and save payment details
+            user = request.user
+            amount = form.cleaned_data['amount']
+            currency = form.cleaned_data['currency']
+            card_number = form.cleaned_data['card_number']
+            expiration_date = form.cleaned_data['expiration_date']
+            cvv = form.cleaned_data['cvv']
+
+            # Perform payment processing logic here (e.g., using a payment gateway API)
+
+            # Save payment details in the database
+            payment = Payment.objects.create(
+                user=user,
+                amount=amount,
+                currency=currency,
+                transaction_id='123456',  # Replace with actual transaction ID from payment gateway
+            )
+
+            return render(request, 'CryptoWebsite/payment_success.html', {'payment': payment})
+    else:
+        form = PaymentForm()
+
+    return render(request, 'CryptoWebsite/make_payment.html', {'form': form})

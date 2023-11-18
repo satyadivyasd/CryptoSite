@@ -1,8 +1,11 @@
 {% extends 'CryptoWebsite/base.html' %}
 
 {% block title %}Home{% endblock %}
-
-{% block content %}
-    <img src="https://img.thedailybeast.com/image/upload/c_crop,d_placeholder_euli9k,h_506,w_900,x_0,y_0/dpr_2.0/c_limit,w_740/fl_lossy,q_auto/v1517242987/A180129-Adelstein-Japan-Suffers-cryptocurrency-heist-hero_yfkceg" class="img-fluid" alt="Welcome Image">
-
-{% endblock %}
+<div class="d-flex flex-grow-1" style="width: fit-content">
+    <div class="col-md-12">
+        {% block content %}
+            <!-- Content for the full-width column goes here -->
+            <img src="https://i.pinimg.com/originals/3f/ac/8d/3fac8da7df59f26425ea3fab82f8f448.jpg" class="img-fluid" alt="Full-width Image">
+        {% endblock %}
+    </div>
+</div>

@@ -117,6 +117,7 @@ STATIC_URL = "static/"
 CONVERSION_AMOUNT=0.00
 STOCK_NAME="sd"
 CHART=""
+PREV_CODE='USD'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

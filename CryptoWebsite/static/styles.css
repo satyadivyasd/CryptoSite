@@ -1,32 +1,32 @@
-.list-group-item
-{
-    color: black;
-    font-size: 20px;
-    font-weight: normal;
+/*.list-group-item*/
+/*{*/
+/*    color: black;*/
+/*    font-size: 20px;*/
+/*    font-weight: normal;*/
 
-}
-.container-with-border {
-            border-bottom: 1px solid #ddd; /* Adjust border style and color as needed */
-            margin-top: 1.5rem; /* Same as mt-4 in Bootstrap (1rem = 16px) */
-            padding-bottom: 1.5rem; /* Add padding to match the border thickness */
-        }
-.footer {
-            background-color: #f8f9fa;
-            padding: 20px 0;
-            text-align: center; 
-            padding-block-end: 50px;
-        }
-.nav-item{
-    font-size: large;
-    font-weight: bold;
+/*}*/
+/*.container-with-border {*/
+/*            border-bottom: 1px solid #ddd; !* Adjust border style and color as needed *!*/
+/*            margin-top: 1.5rem; !* Same as mt-4 in Bootstrap (1rem = 16px) *!*/
+/*            padding-bottom: 1.5rem; !* Add padding to match the border thickness *!*/
+/*        }*/
+/*.footer {*/
+/*            background-color: #f8f9fa;*/
+/*            padding: 20px 0;*/
+/*            text-align: center;*/
+/*            padding-block-end: 50px;*/
+/*        }*/
+/*.nav-item{*/
+/*    font-size: large;*/
+/*    font-weight: bold;*/
 
-}
-.dropdown-item:hover
-{
-    background-color: black;
-    color:ghostwhite;
-    border-top-left-radius: 0.3px;
-}
+/*}*/
+/*.dropdown-item:hover*/
+/*{*/
+/*    background-color: black;*/
+/*    color:ghostwhite;*/
+/*    border-top-left-radius: 0.3px;*/
+/*}*/
 
 /*.row{*/
 /*    height: 50%;*/
@@ -38,34 +38,34 @@
 /*.col{*/
 /*    height: 80%;*/
 /*}*/
-.nav-link {
-    color: white;
-    font-size: larger;
-}
+/*.nav-link {*/
+/*    color: white;*/
+/*    font-size: larger;*/
+/*}*/
 
-.mt-4{
-    padding-top: 60px;
-}
+/*.mt-4{*/
+/*    padding-top: 60px;*/
+/*}*/
 
-h1
-{
-    padding-top: 150px;
-    /*text-align: justify;*/
-    text-align: -webkit-center;
-    font-family: 'Lucida Grande', Arial, sans-serif;
-    font-style: normal;
-    font-weight: bolder;
-    color: darkslategrey;
+/*h1*/
+/*{*/
+/*    padding-top: 150px;*/
+/*    !*text-align: justify;*!*/
+/*    text-align: -webkit-center;*/
+/*    font-family: 'Lucida Grande', Arial, sans-serif;*/
+/*    font-style: normal;*/
+/*    font-weight: bolder;*/
+/*    color: darkslategrey;*/
 
-}
-/*body {*/
-/*            margin: 0;*/
-/*            padding: 0;*/
-/*            !*background-image: url("{% static 'CryptoWebsite/images/homegif.gif' %}");*!*/
-/*            background-size: cover;*/
-/*            background-position: center;*/
-/*            background-repeat: no-repeat;*/
-/*            height: 100%;  !* Adjust as needed *!*/
-/*            width: 100%;*/
-/*            height: 100%;*/
-/*        }*/
+/*}*/
+/*!*body {*!*/
+/*!*            margin: 0;*!*/
+/*!*            padding: 0;*!*/
+/*!*            !*background-image: url("{% static 'CryptoWebsite/images/homegif.gif' %}");*!*!*/
+/*!*            background-size: cover;*!*/
+/*!*            background-position: center;*!*/
+/*!*            background-repeat: no-repeat;*!*/
+/*!*            height: 100%;  !* Adjust as needed *!*!*/
+/*!*            width: 100%;*!*/
+/*!*            height: 100%;*!*/
+/*!*        }*!*/

@@ -1,57 +1,51 @@
 {% extends 'CryptoWebsite/base.html' %}
 
-{% block title %}Courses{% endblock %}
+{% block title %}StockInfo{% endblock %}
 
 {% block content %}
-            <!-- Main Content -->
- <div class="container mt-4">
-    <div class="row">
-        <!-- First Column -->
-        <div class="col-md-6">
-            <h2>{{ STOCK_NAME }}</h2>
-            <!-- Add content for the first column as needed -->
+    <div class="container mt-4">
+        <!-- First Row -->
+        <div class="row">
+            <!-- First Column -->
+            <div class="col-md-6">
+                <h2>{{ STOCK_NAME }}</h2>
+            </div>
+            <!-- Second Column -->
+            <div class="col-md-6">
+                <label for="currencyDropdown">Select Currency:</label>
+                <select id="currencyDropdown" class="form-control" onchange="location = this.value;">
+                    {% for c in currencies %}
+                        {% if c.code == selected_currency_code %}
+                            <option value="{% url 'convert_currency' amount=CONVERSION_AMOUNT to_currency=c.code from_currency=PREV_CODE %}" selected>{{ c.code }}</option>
+                        {% else %}
+                            <option value="{% url 'convert_currency' amount=CONVERSION_AMOUNT to_currency=c.code from_currency=PREV_CODE %}">{{ c.code }}</option>
+                        {% endif %}
+                    {% empty %}
+                        <option disabled>No currencies available</option>
+                    {% endfor %}
+                    <!-- Add more dropdown items as needed -->
+                </select>
+            </div>
         </div>
 
-        <!-- Second Column -->
-       <div class="col-md-6">
-            <!-- Dropdown Trigger Column -->
-            <div class="dropdown" >
-                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ currencies.first }}
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    {% for c in currencies %}
-                        <li><a class="dropdown-item" href={% url 'convert_currency' amount=CONVERSION_AMOUNT to_currency=c.code from_currency='USD' %}>{{ c.code }}</a><br></li>
-{#                        #}
-                        {% empty %}
-                        <a class="nav-item-dropdown text-muted">No courses available</a>
-                        {% endfor %}
+        <!-- Second Row -->
+        <div class="row mt-2">
+            <!-- First Column -->
+            <div class="col-md-12">
+                <h2>{{ PREV_CODE }}:{{CONVERSION_AMOUNT }}</h2>
+            </div>
+        </div>
 
-                    <!-- Add more dropdown items as needed -->
+        <!-- Third Row -->
+        <div class="row mt-4">
+            <!-- Full Width Column for Chart -->
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        {{ CHART|safe }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Second Row -->
-<div class="container mt-4">
-    <div class="row" >
-        <!-- First Column in Second Row -->
-        <div class="col-md-8">
-            <h2>{{CONVERSION_AMOUNT }}</h2>
-        </div>
-        <div class="col-md-6" style="width: fit-content" >
-            {{ CHART|safe }}
-        </div>
-        <!-- Second Column in Second Row -->
-    </div>
-</div>
-     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
 {% endblock %}
