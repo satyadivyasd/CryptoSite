@@ -10,7 +10,6 @@ class Currency(models.Model):
     def __str__(self):
         return self.code
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to='profile_images', blank=True)
@@ -48,3 +47,28 @@ class Payment(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.amount} {self.currency}'
+
+class Feedback(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # New fields related to cryptocurrency feedback
+    cryptocurrency_experience = models.IntegerField(choices=[
+        (1, 'Novice'),
+        (2, 'Intermediate'),
+        (3, 'Advanced'),
+    ], default=1)
+    platform_satisfaction = models.IntegerField(choices=[
+        (1, 'Not satisfied'),
+        (2, 'Satisfied'),
+        (3, 'Very satisfied'),
+    ], default=2)
+    security_confidence = models.IntegerField(choices=[
+        (1, 'Low'),
+        (2, 'Moderate'),
+        (3, 'High'),
+    ], default=2)
+    future_expectations = models.TextField(blank=True, null=True)
+    # Add more fields as needed

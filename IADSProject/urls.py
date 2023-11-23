@@ -29,7 +29,7 @@ urlpatterns = [
     path('convert_currency/<str:amount>/<str:from_currency>/<str:to_currency>/', views.convert_currency, name='convert_currency'),
     # path('monthly_stock_data',views.monthly_stock_data,name='monthly_stock_data'),
     path('stockinfo/<path:stockname>/',views.stockinfo,name='stockinfo'),
-    path('data',views.data,name='data'),
+    # path('data',views.data,name='data'),
     path('stocks',views.stocks,name='stocks'),
     path('register/',views.register,name='register'),
     path('login/',views.user_login,name='login'),
@@ -37,6 +37,7 @@ urlpatterns = [
     path('reset',auth_views.PasswordResetView.as_view()),
     path('myaccount/', views.myaccount, name='myaccount'),
     path('make_payment/', views.make_payment, name='make_payment'),
+    path('feedback/',views.feedback_view,name='feedback')
 
     # path('generate_graph',views.generate_graph,name='generate_graph'),
     # path('fetch_stock_data/', FetchStockDataView.as_view(), name='fetch_stock_data'),

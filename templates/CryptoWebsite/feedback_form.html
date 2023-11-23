@@ -1,0 +1,23 @@
+<!-- feedback/templates/feedback_form.html -->
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback Form</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+<h1>FEEDBACK</h1>
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+    <div class="thank-you" style="display: none;">Thank you for your feedback!</div>
+</div>
+
+</body>
+</html>

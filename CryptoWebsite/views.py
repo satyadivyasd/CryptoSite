@@ -14,7 +14,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from .models import StockData, Currency, Payment
 from django.contrib.auth.decorators import login_required
-from .forms import RegistrationForm, UserProfileForm, PaymentForm
+from .forms import RegistrationForm, UserProfileForm, PaymentForm, FeedbackForm, ContactUs
 
 
 def convert_currency(request, amount, from_currency, to_currency):
@@ -54,7 +54,7 @@ def home(request):
 
 # Create your views here.
 def stockinfo(request, stockname):
-    data = StockData.objects.get(name=stockname)
+    data = StockData.objects.filter(name=stockname).first()
     settings.STOCK_NAME=stockname
     currencies = Currency.objects.all()
     if data:
@@ -129,7 +129,11 @@ def register(request):
 
     return render(request, 'CryptoWebsite/register.html', {'user_form': user_form, 'profile_form': profile_form})
 
-
+def contactus(request):
+    if request.method=='POST':
+        contactform=ContactUs(request.POST)
+        if contactform.is_valid():
+            return ('/home')
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -152,75 +156,75 @@ def myaccount(request):
     return render(request, 'CryptoWebsite/userprofile.html', {'user_profile': user_profile})
 
 
-def data(request):
-    # CoinMarketCap API endpoint for cryptocurrency listings
-    api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
-    # Add your CoinMarketCap API key here
-    api_key = '3ebb690c-aa21-4b14-bcd7-c84b1b48420e'
-    # Define parameters for the API request
-    params = {
-        'start': '1',
-        'limit': '10',
-        'convert': 'USD'
-    }
-    # Set headers, including the API key
-    headers = {
-        'Accepts': 'application/json',
-        'X-CMC_PRO_API_KEY': api_key,
-    }
-    # Make the API request
-    response = requests.get(api_url, headers=headers, params=params)
-    if response.status_code == 200:
-        # Parse the JSON response
-        data = response.json()
-        # Extract relevant information from the response
-
-        cryptocurrencies = [
-            {
-                'name': crypto['name'],
-                'symbol': crypto['symbol'],
-                'price': '${:,.2f}'.format(crypto['quote']['USD']['price']),
-                'market_cap': '${:,.2f}'.format(crypto['quote']['USD']['market_cap']),
-                'change_percentage': '{:.2f}'.format(crypto['quote']['USD']['percent_change_24h']),
-                'volume_24h': crypto['quote']['USD']['volume_24h'],
-                "volume_change_24h": crypto['quote']['USD']['volume_change_24h'],
-                "percent_change_1h": crypto['quote']['USD']['percent_change_1h'],
-                "percent_change_24h": crypto['quote']['USD']['percent_change_24h'],
-                "percent_change_7d": crypto['quote']['USD']['percent_change_7d'],
-                "percent_change_30d": crypto['quote']['USD']['percent_change_30d'],
-                "percent_change_60d": crypto['quote']['USD']['percent_change_60d'],
-                "percent_change_90d": crypto['quote']['USD']['percent_change_90d'],
-
-            }
-            for crypto in data['data']
-        ]
-        for crypto in cryptocurrencies:
-            StockData.objects.create(
-                name=crypto['name'],
-                symbol=crypto['symbol'],
-                price=Decimal(crypto['price'].replace('$', '').replace(',', '')),
-                market_cap=Decimal(crypto['market_cap'].replace('$', '').replace(',', '')),
-                change_percentage=Decimal(crypto['change_percentage']),
-                volume_24h=Decimal(crypto['volume_24h']),
-                volume_change_24h=Decimal(crypto['volume_change_24h']),
-                lasthour=Decimal(crypto['percent_change_1h']),
-                last24h=Decimal(crypto['percent_change_24h']),
-                week=Decimal(crypto['percent_change_7d']),
-                month=Decimal(crypto['percent_change_30d']),
-                TwoMonths=Decimal(crypto['percent_change_60d']),
-                ThreeMonths=Decimal(crypto['percent_change_90d']),
-            )
-        print(cryptocurrencies)
-
-    else:
-        # If the API request fails, provide some default data or handle the error as needed
-        cryptocurrencies = [
-            {"name": "Bitcoin", "symbol": "BTC", "price": "$60,000", "market_cap": "$1.2 Trillion",
-             "change_percentage": "+5"},
-            # Add more default cryptocurrencies as needed
-        ]
-    print(cryptocurrencies)
-    return render(request, 'CryptoWebsite/home.html', {'cryptocurrencies': cryptocurrencies})
+# def data(request):
+#     # CoinMarketCap API endpoint for cryptocurrency listings
+#     api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+#     # Add your CoinMarketCap API key here
+#     api_key = '3ebb690c-aa21-4b14-bcd7-c84b1b48420e'
+#     # Define parameters for the API request
+#     params = {
+#         'start': '1',
+#         'limit': '10',
+#         'convert': 'USD'
+#     }
+#     # Set headers, including the API key
+#     headers = {
+#         'Accepts': 'application/json',
+#         'X-CMC_PRO_API_KEY': api_key,
+#     }
+#     # Make the API request
+#     response = requests.get(api_url, headers=headers, params=params)
+#     if response.status_code == 200:
+#         # Parse the JSON response
+#         data = response.json()
+#         # Extract relevant information from the response
+#
+#         cryptocurrencies = [
+#             {
+#                 'name': crypto['name'],
+#                 'symbol': crypto['symbol'],
+#                 'price': '${:,.2f}'.format(crypto['quote']['USD']['price']),
+#                 'market_cap': '${:,.2f}'.format(crypto['quote']['USD']['market_cap']),
+#                 'change_percentage': '{:.2f}'.format(crypto['quote']['USD']['percent_change_24h']),
+#                 'volume_24h': crypto['quote']['USD']['volume_24h'],
+#                 "volume_change_24h": crypto['quote']['USD']['volume_change_24h'],
+#                 "percent_change_1h": crypto['quote']['USD']['percent_change_1h'],
+#                 "percent_change_24h": crypto['quote']['USD']['percent_change_24h'],
+#                 "percent_change_7d": crypto['quote']['USD']['percent_change_7d'],
+#                 "percent_change_30d": crypto['quote']['USD']['percent_change_30d'],
+#                 "percent_change_60d": crypto['quote']['USD']['percent_change_60d'],
+#                 "percent_change_90d": crypto['quote']['USD']['percent_change_90d'],
+#
+#             }
+#             for crypto in data['data']
+#         ]
+#         for crypto in cryptocurrencies:
+#             StockData.objects.create(
+#                 name=crypto['name'],
+#                 symbol=crypto['symbol'],
+#                 price=Decimal(crypto['price'].replace('$', '').replace(',', '')),
+#                 market_cap=Decimal(crypto['market_cap'].replace('$', '').replace(',', '')),
+#                 change_percentage=Decimal(crypto['change_percentage']),
+#                 volume_24h=Decimal(crypto['volume_24h']),
+#                 volume_change_24h=Decimal(crypto['volume_change_24h']),
+#                 lasthour=Decimal(crypto['percent_change_1h']),
+#                 last24h=Decimal(crypto['percent_change_24h']),
+#                 week=Decimal(crypto['percent_change_7d']),
+#                 month=Decimal(crypto['percent_change_30d']),
+#                 TwoMonths=Decimal(crypto['percent_change_60d']),
+#                 ThreeMonths=Decimal(crypto['percent_change_90d']),
+#             )
+#         print(cryptocurrencies)
+#
+#     else:
+#         # If the API request fails, provide some default data or handle the error as needed
+#         cryptocurrencies = [
+#             {"name": "Bitcoin", "symbol": "BTC", "price": "$60,000", "market_cap": "$1.2 Trillion",
+#              "change_percentage": "+5"},
+#             # Add more default cryptocurrencies as needed
+#         ]
+#     print(cryptocurrencies)
+#     return render(request, 'CryptoWebsite/home.html', {'cryptocurrencies': cryptocurrencies})
 
 def stocks(request):
     # CoinMarketCap API endpoint for cryptocurrency listings
@@ -255,6 +259,14 @@ def stocks(request):
                 'price': '${:,.2f}'.format(crypto['quote']['USD']['price']),
                 'market_cap': '${:,.2f}'.format(crypto['quote']['USD']['market_cap']),
                 'change_percentage': '{:.2f}'.format(crypto['quote']['USD']['percent_change_24h']),
+                'volume_24h': crypto['quote']['USD']['volume_24h'],
+                "volume_change_24h": crypto['quote']['USD']['volume_change_24h'],
+                "percent_change_1h": crypto['quote']['USD']['percent_change_1h'],
+                "percent_change_24h": crypto['quote']['USD']['percent_change_24h'],
+                "percent_change_7d": crypto['quote']['USD']['percent_change_7d'],
+                "percent_change_30d": crypto['quote']['USD']['percent_change_30d'],
+                "percent_change_60d": crypto['quote']['USD']['percent_change_60d'],
+                "percent_change_90d": crypto['quote']['USD']['percent_change_90d'],
             }
             for crypto in data['data']
         ]
@@ -265,7 +277,23 @@ def stocks(request):
              "change_percentage": "+5"},
             # Add more default cryptocurrencies as needed
         ]
+    for crypto in cryptocurrencies:
+        StockData.objects.create(
+    name = crypto['name'],
+    symbol = crypto['symbol'],
+    price = Decimal(crypto['price'].replace('$', '').replace(',', '')),
+    market_cap = Decimal(crypto['market_cap'].replace('$', '').replace(',', '')),
+    change_percentage = Decimal(crypto['change_percentage']),
+    volume_24h = Decimal(crypto['volume_24h']),
+    volume_change_24h = Decimal(crypto['volume_change_24h']),
+    lasthour = Decimal(crypto['percent_change_1h']),
+    last24h = Decimal(crypto['percent_change_24h']),
+    week = Decimal(crypto['percent_change_7d']),
+    month = Decimal(crypto['percent_change_30d']),
+    TwoMonths = Decimal(crypto['percent_change_60d']),
+    ThreeMonths = Decimal(crypto['percent_change_90d']),
 
+)
     return render(request, 'CryptoWebsite/stocks.html', {'cryptocurrencies': cryptocurrencies})
 
 def make_payment(request):
@@ -295,3 +323,15 @@ def make_payment(request):
         form = PaymentForm()
 
     return render(request, 'CryptoWebsite/make_payment.html', {'form': form})
+
+
+def feedback_view(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'CryptoWebsite/thank_you.html')  # Create a thank you page
+    else:
+        form = FeedbackForm()
+
+    return render(request, 'CryptoWebsite/feedback_form.html', {'form': form})

@@ -6,24 +6,27 @@ from django.contrib.sites import requests
 import requests
 
 
-from .models import UserProfile
-class DateForm(forms.Form):
-    start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-    end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+from .models import UserProfile, Feedback
 
-# forms.py in your app
 
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField()
-
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2',]
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['profile_image']
+
+class ContactUs(forms.ModelForm):
+    problem=forms.CharField(max_length=300)
+    description=forms.CharField(max_length=2000)
+    email=forms.EmailField(max_length=40)
+    mobile=forms.IntegerField()
+
+
 class PaymentForm(forms.Form):
     amount = forms.DecimalField(label='Amount', max_digits=10, decimal_places=2, required=True)
     card_number = forms.CharField(label='Card Number', max_length=16, required=True)
@@ -51,3 +54,7 @@ class PaymentForm(forms.Form):
         cryptocurrencies = [('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('XRP', 'Ripple')]
 
     cryptocurrency = forms.ChoiceField(label='Cryptocurrency', choices=cryptocurrencies, required=True)
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['name', 'email', 'message', 'cryptocurrency_experience', 'platform_satisfaction', 'security_confidence', 'future_expectations']

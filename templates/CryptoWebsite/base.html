@@ -12,7 +12,7 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark "style="background-color: darkslateblue">
   <a class="navbar-brand" href="#">Crypto Geek</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -29,16 +29,16 @@
 {#        <a class="nav-link" href="#">Individual</a>#}
 {#      </li>#}
     </ul>
-      <span class="navbar-text">
+    <span class="navbar-text">
     {% if user.is_authenticated %}
         <div class="dropdown">
-            <button class="btn btn-primary rounded-circle dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-{#                <img src="{{ user.avatar.url }}" alt="User Avatar" class="avatar-img rounded-circle">#}
-                {{ user.username }}
+            <button class="btn rounded-circle dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img src="https://icon-library.com/images/free-avatar-icon/free-avatar-icon-10.jpg" alt="User Avatar" class="avatar-img rounded-circle" style="width: 1cm; height: 1cm;">
             </button>
-            <div class="dropdown-menu dropdown-menu-right rounded" aria-labelledby="userDropdown">
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                 <a class="dropdown-item rounded" href="/myaccount" style="color: black;">My Profile</a>
                 <a class="dropdown-item rounded" href="/logout" style="color: black;">Logout</a>
+                <a class="dropdown-item rounded" href="/feedback" style="color: black;">feedback</a>
             </div>
         </div>
     {% else %}
@@ -60,11 +60,11 @@
             <!-- Default content for child templates goes here -->
         {% endblock %}
 {#    </div>#}
-{#    <footer class="footer">#}
-{#        <div class="container">#}
-{#            <p>&copy; 2023 Your Company. All rights reserved.</p>#}
-{#        </div>#}
-{#    </footer>#}
+    <footer style="flex-shrink: inherit;background-color: darkslateblue;text-align: center;color: white;height: 50px;margin-top: 350px">
+        <p>&copy; 2023 Your Cryptocurrency Website. All rights reserved.</p>
+    </footer>
+
+
 
 </body>
 

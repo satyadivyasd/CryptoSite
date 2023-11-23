@@ -1,0 +1,12 @@
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block content %}
+{#    <h2>Register</h2>#}
+  <div class="container mt-4 d-flex justify-content-center align-items-center">
+
+    <form method="post" enctype="multipart/form-data" class="d-flex flex-column">
+      {% csrf_token %}
+        {{ contactus }}
+    </form>
+  </div>
+{% endblock %}

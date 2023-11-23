@@ -1,3 +1,7 @@
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block title %}StockInfo{% endblock %}
+
 {% block content %}
 
     <meta charset="UTF-8">
@@ -18,10 +22,24 @@
             text-align: center;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: steelblue;
+            color: #ffffff;
+        }
+
         section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
             padding: 20px;
         }
 
@@ -31,7 +49,6 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin: 10px;
             padding: 20px;
-            width: 300px;
         }
 
         footer {
@@ -44,26 +61,30 @@
 </head>
 <body>
 
-    <header>
-        <h1> Coin Geek</h1>
-    </header>
-
     <section>
-    {% for crypto in cryptocurrencies %}
-    <div class="crypto-card">
-        <a href="{% url 'stockinfo' stockname=crypto.name %}">
-            <h2>{{ crypto.name }} ({{ crypto.symbol }})</h2>
-        </a>
-        <p>Price: {{ crypto.price }}</p>
-        <p>Market Cap: {{ crypto.market_cap }}</p>
-        <p>24h Change: {{ crypto.change_percentage }}%</p>
-    </div>
-    {% endfor %}
-</section>
-
-    <footer>
-        <p>&copy; 2023 Your Cryptocurrency Website. All rights reserved.</p>
-    </footer>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Symbol</th>
+                    <th>Price</th>
+                    <th>Market Cap</th>
+                    <th>24h Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for crypto in cryptocurrencies %}
+                    <tr>
+                        <td><a href="{% url 'stockinfo' stockname=crypto.name %}">{{ crypto.name }}</a></td>
+                        <td>{{ crypto.symbol }}</td>
+                        <td>{{ crypto.price }}</td>
+                        <td>{{ crypto.market_cap }}</td>
+                        <td>{{ crypto.change_percentage }}%</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
 
 
 {% endblock %}
