@@ -1,12 +1,12 @@
-from django import forms
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.sites import requests
+from .models import ContactMessage, Profile
 import requests
 
 
-from .models import UserProfile, Feedback
+from .models import Feedback
 
 
 
@@ -15,16 +15,7 @@ class RegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2',]
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ['profile_image']
 
-class ContactUs(forms.ModelForm):
-    problem=forms.CharField(max_length=300)
-    description=forms.CharField(max_length=2000)
-    email=forms.EmailField(max_length=40)
-    mobile=forms.IntegerField()
 
 
 class PaymentForm(forms.Form):
@@ -32,8 +23,6 @@ class PaymentForm(forms.Form):
     card_number = forms.CharField(label='Card Number', max_length=16, required=True)
     expiration_date = forms.CharField(label='Expiration Date', max_length=5, required=True)
     cvv = forms.CharField(label='CVV', max_length=3, required=True)
-
-    # Fetch cryptocurrency options from the CoinMarketCap API
     api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
     api_key = '3ebb690c-aa21-4b14-bcd7-c84b1b48420e'
     headers = {
@@ -54,6 +43,19 @@ class PaymentForm(forms.Form):
         cryptocurrencies = [('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('XRP', 'Ripple')]
 
     cryptocurrency = forms.ChoiceField(label='Cryptocurrency', choices=cryptocurrencies, required=True)
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = 'first_name','last_name','phone_no','date_of_birth','profile_image'
+
+        def __init__(self, *args, **kwargs):
+            super(UserProfileForm, self).__init__(*args, **kwargs)
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = ContactMessage
+        fields = ['name', 'email', 'message']
+
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback

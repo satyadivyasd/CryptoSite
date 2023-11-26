@@ -1,0 +1,30 @@
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block content %}
+
+<div class="container mt-4 d-flex justify-content-center align-items-center">
+    <form method="post" enctype="multipart/form-data" class="d-flex flex-column" action="{% url 'contact_view' %}">
+        <h2>Contact Us</h2>
+    {% csrf_token %}
+    <table class="table">
+        <tbody>
+          <tr>
+            <th>{{ form.name.label_tag }}</th>
+            <td>{{ form.name }}</td>
+          </tr>
+           <tr>
+            <th>{{ form.email.label_tag }}</th>
+            <td>{{ form.email }}</td>
+          </tr>
+           <tr>
+            <th>{{ form.message.label_tag }}</th>
+            <td>{{ form.message }}</td>
+          </tr>
+        </tbody>
+
+
+    </table><button type="submit">Submit</button>
+
+</form>
+</div>
+{% endblock %}

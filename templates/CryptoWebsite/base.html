@@ -30,15 +30,18 @@
 {#      </li>#}
     </ul>
     <span class="navbar-text">
+
+
     {% if user.is_authenticated %}
         <div class="dropdown">
             <button class="btn rounded-circle dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <img src="https://icon-library.com/images/free-avatar-icon/free-avatar-icon-10.jpg" alt="User Avatar" class="avatar-img rounded-circle" style="width: 1cm; height: 1cm;">
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                <a class="dropdown-item rounded" href="/myaccount" style="color: black;">My Profile</a>
-                <a class="dropdown-item rounded" href="/logout" style="color: black;">Logout</a>
+                <a class="dropdown-item rounded" {% url 'my_profile' %} style="color: black;">My Profile</a>
                 <a class="dropdown-item rounded" href="/feedback" style="color: black;">feedback</a>
+                <a class="dropdown-item rounded" href="/logout" style="color: black;">Logout</a>
+
             </div>
         </div>
     {% else %}
@@ -60,8 +63,11 @@
             <!-- Default content for child templates goes here -->
         {% endblock %}
 {#    </div>#}
-    <footer style="flex-shrink: inherit;background-color: darkslateblue;text-align: center;color: white;height: 50px;margin-top: 350px">
-        <p>&copy; 2023 Your Cryptocurrency Website. All rights reserved.</p>
+    <footer style="flex-shrink: inherit;background-color: darkslateblue;text-align: center;color: white;height: 50px;margin-top: 350px;display:flex">
+        <a class="dropdown-item rounded" href="/contact" style="color: black;">Contact Us</a>
+        <a class="dropdown-item rounded" href="/about" style="color: black;">About Us</a>
+
+
     </footer>
 
 

@@ -35,11 +35,11 @@
             <th>{{ user_form.password2.label_tag }}</th>
             <td>{{ user_form.password2 }}</td>
           </tr>
-           <tr>
-            <th>{{ profile_form.profile_image.label_tag }}</th>
-            <td>{{ profile_form.profile_image }}</td>
-          </tr>
-          {# Include profile form fields here if applicable #}
+{#           <tr>#}
+{#            <th>{{ profile_form.profile_image.label_tag }}</th>#}
+{#            <td>{{ profile_form.profile_image }}</td>#}
+{#          </tr>#}
+          {{ profile_form }}
 
         </tbody>
       </table>

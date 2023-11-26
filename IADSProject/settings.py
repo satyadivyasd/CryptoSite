@@ -125,3 +125,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'CryptoWebsite/static')]
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

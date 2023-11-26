@@ -10,12 +10,8 @@ class Currency(models.Model):
     def __str__(self):
         return self.code
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_image = models.ImageField(upload_to='profile_images', blank=True)
 
-    def __str__(self):
-        return self.user.username
+
 class StockData(models.Model):
     name = models.CharField(max_length=255)
     symbol = models.CharField(max_length=10)
@@ -34,8 +30,7 @@ class StockData(models.Model):
     def __str__(self):
         return self.name
 
-    # Add other fields as needed
-# models.py
+
 
 
 class Payment(models.Model):
@@ -71,4 +66,38 @@ class Feedback(models.Model):
         (3, 'High'),
     ], default=2)
     future_expectations = models.TextField(blank=True, null=True)
-    # Add more fields as needed
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    message = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    first_name = models.CharField(max_length=20, null=True)
+    last_name = models.CharField(max_length=20, null=True)
+    date_of_birth = models.DateField(null=True)
+    email = models.EmailField(null=True)
+    phone_no = models.IntegerField(null=True)
+    profile_image = models.ImageField(upload_to='profile_images', blank=True)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
+    first_name = models.CharField(max_length=20,null=True)
+    last_name = models.CharField(max_length=20, null=True)
+    date_of_birth = models.DateField(null=True)
+    email = models.EmailField(null=True)
+    Phone_no = models.IntegerField(null=True)
+    profile_image = models.ImageField(upload_to='profile_images', blank=True)
+# class Contact(models.Model):
+#     name=models.CharField(max_length=50)
+#     email=models.EmailField()
+#     concern=models.TextField()
+#     def _str_(self):
+#         return self.name
+#
+
+

@@ -17,9 +17,16 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
+    PasswordResetCompleteView
 from django.urls import path
+from django.views.generic import TemplateView
+
 from CryptoWebsite import views
 from django.contrib.auth import views as auth_views
+
+from CryptoWebsite.views import contact_view
+
 # from CryptoWebsite.views import FetchStockDataView, CryptoDataView, stocks, crypto_volume_chart
 
 urlpatterns = [
@@ -34,10 +41,17 @@ urlpatterns = [
     path('register/',views.register,name='register'),
     path('login/',views.user_login,name='login'),
     path('logout/', views.user_logout, name='logout'),
-    path('reset',auth_views.PasswordResetView.as_view()),
-    path('myaccount/', views.myaccount, name='myaccount'),
+    # path('reset',auth_views.PasswordResetView.as_view()),
+    path('myprofile/', views.update_profile, name='my_profile'),
     path('make_payment/', views.make_payment, name='make_payment'),
-    path('feedback/',views.feedback_view,name='feedback')
+    path('feedback/',views.feedback_view,name='feedback'),
+    path('forgotpassword/', PasswordResetView.as_view(), name='forgotpassword'),
+    # path('accounts/password/reset/', PasswordResetView.as_view(), name='account_reset_password'),
+    path('accounts/password/reset/done/', PasswordResetDoneView.as_view(), name='account_reset_password_done'),
+    path('accounts/password/reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='account_reset_password_confirm'),
+    path('accounts/password/done/', PasswordResetCompleteView.as_view(), name='account_reset_password_complete'),
+    path('contact/', views.contact_view,name='contact_view'),
+    path('about/', TemplateView.as_view(template_name='CryptoWebsite/aboutus.html'), name='about'),
 
     # path('generate_graph',views.generate_graph,name='generate_graph'),
     # path('fetch_stock_data/', FetchStockDataView.as_view(), name='fetch_stock_data'),

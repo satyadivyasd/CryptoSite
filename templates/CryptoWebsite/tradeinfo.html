@@ -14,7 +14,8 @@
             <div class="col-md-6">
                 <label for="currencyDropdown">Select Currency:</label>
                 <select id="currencyDropdown" class="form-control" onchange="location = this.value;">
-                    {% for c in currencies %}
+                    <option value="" selected>Select Currency</option> <!-- Default option -->
+                    {% for c in currencies|slice:":20" %}
                         {% if c.code == selected_currency_code %}
                             <option value="{% url 'convert_currency' amount=CONVERSION_AMOUNT to_currency=c.code from_currency=PREV_CODE %}" selected>{{ c.code }}</option>
                         {% else %}
@@ -23,9 +24,9 @@
                     {% empty %}
                         <option disabled>No currencies available</option>
                     {% endfor %}
-                    <!-- Add more dropdown items as needed -->
                 </select>
             </div>
+
         </div>
 
         <!-- Second Row -->

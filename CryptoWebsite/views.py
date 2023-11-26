@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.conf import settings
-
+from django.contrib.auth import views as auth_views
 from django.contrib.auth import authenticate, login, logout
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -10,11 +10,11 @@ import plotly.express as px
 import requests
 from django.shortcuts import render
 
-
 from django.urls import reverse
-from .models import StockData, Currency, Payment
+from .models import StockData, Currency, Payment,Profile
 from django.contrib.auth.decorators import login_required
-from .forms import RegistrationForm, UserProfileForm, PaymentForm, FeedbackForm, ContactUs
+from .forms import RegistrationForm, PaymentForm, FeedbackForm, ContactForm, UserProfileForm
+from django.shortcuts import render, redirect
 
 
 def convert_currency(request, amount, from_currency, to_currency):
@@ -31,13 +31,13 @@ def convert_currency(request, amount, from_currency, to_currency):
     result = {
         'CONVERSION_AMOUNT': converted_amount,
         'currencies': c,
-        'price':amount,
-        'STOCK_NAME':settings.STOCK_NAME,
-        'CHART':settings.CHART,
-        'PREV_CODE':to_currency
+        'price': amount,
+        'STOCK_NAME': settings.STOCK_NAME,
+        'CHART': settings.CHART,
+        'PREV_CODE': to_currency
     }
-    settings.CONVERSION_AMOUNT=converted_amount
-    settings.PREV_CODE=from_currency
+    settings.CONVERSION_AMOUNT = converted_amount
+    settings.PREV_CODE = from_currency
     if response.status_code == 200:
         return render(request, 'CryptoWebsite/tradeinfo.html', result)
 
@@ -48,14 +48,14 @@ def convert_currency(request, amount, from_currency, to_currency):
 
 def home(request):
     currencies = Currency.objects.all()
-    context={'currencies':currencies}
-    return render(request, 'CryptoWebsite/home.html',context)
+    context = {'currencies': currencies}
+    return render(request, 'CryptoWebsite/home.html', context)
 
 
-# Create your views here.
+@login_required()
 def stockinfo(request, stockname):
     data = StockData.objects.filter(name=stockname).first()
-    settings.STOCK_NAME=stockname
+    settings.STOCK_NAME = stockname
     currencies = Currency.objects.all()
     if data:
         # Extract field names and values for the chart
@@ -63,8 +63,6 @@ def stockinfo(request, stockname):
                   field.name not in ['id', 'name', 'date', 'name', 'price', 'market_cap', 'change_percentage',
                                      'volume_24h', 'volume_change_24h', 'volume_change_24h']]
         values = [getattr(data, field) for field in fields]
-
-        # Create a bar chart with field names on x-axis and values on y-axis
         fig = px.line(
             x=fields,
             y=[values],
@@ -81,27 +79,22 @@ def stockinfo(request, stockname):
         )
 
         chart = fig.to_html()
-        settings.CHART=chart
-        settings.CONVERSION_AMOUNT=data.price
-        settings.STOCK_NAME=stockname
+        settings.CHART = chart
+        settings.CONVERSION_AMOUNT = data.price
+        settings.STOCK_NAME = stockname
         context = {'CHART': chart,
                    'CONVERSION_AMOUNT': data.price,
                    'STOCK_NAME': stockname,
                    'currencies': currencies,
-                   'PREV_CODE':settings.PREV_CODE
+                   'PREV_CODE': settings.PREV_CODE
                    }
     else:
         context = {
-                'chart': None
+            'chart': None
 
-                   }
+        }
 
     return render(request, 'CryptoWebsite/tradeinfo.html', context)
-
-
-def user_logout(request):
-    logout(request)
-    return redirect('home')
 
 
 def register(request):
@@ -114,9 +107,8 @@ def register(request):
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
-            return redirect('login')  # Redirect to login page after successful registration
+            return redirect('login')
         else:
-            # Capture validation errors and pass them to the template
             user_errors = user_form.errors
             profile_errors = profile_form.errors
             return render(request, 'CryptoWebsite/register.html',
@@ -129,11 +121,21 @@ def register(request):
 
     return render(request, 'CryptoWebsite/register.html', {'user_form': user_form, 'profile_form': profile_form})
 
-def contactus(request):
-    if request.method=='POST':
-        contactform=ContactUs(request.POST)
-        if contactform.is_valid():
-            return ('/home')
+def update_profile(request):
+    user_profile = Profile.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            # Refresh the user_profile variable with the updated data
+            user_profile = Profile.objects.get(user=request.user)
+    else:
+        form = UserProfileForm(instance=user_profile)
+
+    return render(request, 'profile.html', {'form': form, 'user_profile': user_profile})
+
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -147,6 +149,24 @@ def user_login(request):
             return render(request, 'CryptoWebsite/login.html', {'error': 'Invalid login credentials.'})
     else:
         return render(request, 'CryptoWebsite/login.html')
+
+
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # You can add additional logic here, such as sending emails.
+            return redirect('home')  # Redirect to a success page
+    else:
+        form = ContactForm()
+
+    return render(request, 'CryptoWebsite/contact_form.html', {'form': form})
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('home')
 
 
 @login_required
@@ -279,22 +299,23 @@ def stocks(request):
         ]
     for crypto in cryptocurrencies:
         StockData.objects.create(
-    name = crypto['name'],
-    symbol = crypto['symbol'],
-    price = Decimal(crypto['price'].replace('$', '').replace(',', '')),
-    market_cap = Decimal(crypto['market_cap'].replace('$', '').replace(',', '')),
-    change_percentage = Decimal(crypto['change_percentage']),
-    volume_24h = Decimal(crypto['volume_24h']),
-    volume_change_24h = Decimal(crypto['volume_change_24h']),
-    lasthour = Decimal(crypto['percent_change_1h']),
-    last24h = Decimal(crypto['percent_change_24h']),
-    week = Decimal(crypto['percent_change_7d']),
-    month = Decimal(crypto['percent_change_30d']),
-    TwoMonths = Decimal(crypto['percent_change_60d']),
-    ThreeMonths = Decimal(crypto['percent_change_90d']),
+            name=crypto['name'],
+            symbol=crypto['symbol'],
+            price=Decimal(crypto['price'].replace('$', '').replace(',', '')),
+            market_cap=Decimal(crypto['market_cap'].replace('$', '').replace(',', '')),
+            change_percentage=Decimal(crypto['change_percentage']),
+            volume_24h=Decimal(crypto['volume_24h']),
+            volume_change_24h=Decimal(crypto['volume_change_24h']),
+            lasthour=Decimal(crypto['percent_change_1h']),
+            last24h=Decimal(crypto['percent_change_24h']),
+            week=Decimal(crypto['percent_change_7d']),
+            month=Decimal(crypto['percent_change_30d']),
+            TwoMonths=Decimal(crypto['percent_change_60d']),
+            ThreeMonths=Decimal(crypto['percent_change_90d']),
 
-)
+        )
     return render(request, 'CryptoWebsite/stocks.html', {'cryptocurrencies': cryptocurrencies})
+
 
 def make_payment(request):
     if request.method == 'POST':
@@ -335,3 +356,11 @@ def feedback_view(request):
         form = FeedbackForm()
 
     return render(request, 'CryptoWebsite/feedback_form.html', {'form': form})
+
+# def contact(request):
+#     if request.method=="POST":
+#
+#
+#
+#     return HTTPResponse("<h1> THANKS FOR CONTACTING US</h1>")
+# return render(request,'contact.html')
