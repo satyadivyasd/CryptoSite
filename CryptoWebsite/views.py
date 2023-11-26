@@ -151,18 +151,6 @@ def user_login(request):
         return render(request, 'CryptoWebsite/login.html')
 
 
-def contact_view(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # You can add additional logic here, such as sending emails.
-            return redirect('home')  # Redirect to a success page
-    else:
-        form = ContactForm()
-
-    return render(request, 'CryptoWebsite/contact_form.html', {'form': form})
-
 
 def user_logout(request):
     logout(request)

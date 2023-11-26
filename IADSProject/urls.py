@@ -42,7 +42,7 @@ urlpatterns = [
     path('login/',views.user_login,name='login'),
     path('logout/', views.user_logout, name='logout'),
     # path('reset',auth_views.PasswordResetView.as_view()),
-    path('myprofile/', views.update_profile, name='my_profile'),
+    path('myprofile/', views.update_profile, name='myprofile'),
     path('make_payment/', views.make_payment, name='make_payment'),
     path('feedback/',views.feedback_view,name='feedback'),
     path('forgotpassword/', PasswordResetView.as_view(), name='forgotpassword'),
