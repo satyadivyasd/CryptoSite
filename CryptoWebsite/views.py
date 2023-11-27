@@ -68,6 +68,11 @@ def stockinfo(request, stockname):
             y=[values],
             labels={'x': 'Stock Time', 'y': 'Stock Change'},
             title=f"Stock Data for {stockname}",
+            line_shape='linear',  # You can change this to 'spline', 'hv', etc.
+            line_dash_sequence=['solid'],  # You can customize the line dash pattern
+            markers=True,  # Show markers on the lines
+            # marker=dict(size=10, color='red'),  # Customize marker size and color
+            template='plotly_dark',  # You can choose a different template for the plot
         )
 
         fig.update_layout(
@@ -133,7 +138,7 @@ def update_profile(request):
     else:
         form = UserProfileForm(instance=user_profile)
 
-    return render(request, 'profile.html', {'form': form, 'user_profile': user_profile})
+    return render(request, 'CryptoWebsite/profile.html', {'form': form, 'user_profile': user_profile,'success':'Profile Updated Successfully'})
 
 
 def user_login(request):

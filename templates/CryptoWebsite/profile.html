@@ -1,0 +1,33 @@
+
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block content %}
+  <h2>User Profile</h2>
+
+  <div>
+  {% if success %}
+      <div class="alert alert-success" role="alert">
+          {{ success }}
+    </div>
+  {% endif %}
+    <div style="float: left; margin-right: 20px;">
+      <!-- Display profile picture in a circular format -->
+        {% if user_profile.profile_image %}
+        <img src="{{ user_profile.profile_image.url }}" alt="Profile Image" style="border-radius: 50%; width: 150px; height: 150px;">
+        {% else %}
+        <img src="https://icon-library.com/images/free-avatar-icon/free-avatar-icon-10.jpg" alt="Profile Image" style="border-radius: 50%; width: 150px; height: 150px;">
+
+      {% endif %}
+
+{#      <img src="{{ user_profile.profile_image.url }}" alt="Profile Image" style="border-radius: 50%; width: 150px; height: 150px;">#}
+      <br>
+      <a href="#" id="edit-profile"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Profile</a>
+    </div>
+
+   <form method="post" enctype="multipart/form-data" style="overflow: hidden;">
+     {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" style="float: left; margin-top: 10px;">Update Profile</button>
+    </form>
+  </div>
+{% endblock %}
