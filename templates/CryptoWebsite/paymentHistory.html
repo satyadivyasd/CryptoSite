@@ -1,0 +1,46 @@
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block title %}Payment History{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h3 class="display-4 text-center mt-5 mb-4">Payment History</h3>
+
+        <div class="table-responsive" {% if paymentHistoryDetails|length > 4 %}style="max-height: 400px; overflow-y: auto;"{% endif %}>
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Transaction ID</th>
+                        <th scope="col">Stock Name</th>
+                        <th scope="col">Payment Date</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price per Unit</th>
+                        <th scope="col">Total Amount</th>
+                        <th scope="col">Currency</th>
+                        <th scope="col">Payment Method</th>
+                        <th scope="col">Transaction Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in paymentHistoryDetails %}
+                        <tr class="{% if payment.get_transaction_type_display == 'BUY' %}table-success{% else %}table-danger{% endif %}">
+                            <td>{{ payment.transaction_id }}</td>
+                            <td>{{ payment.stock_name }}</td>
+                            <td>{{ payment.payment_date }}</td>
+                            <td>{{ payment.quantity_purchased }}</td>
+                            <td>{{ payment.purchase_price_per_unit }}</td>
+                            <td>{{ payment.total_purchase_amount }}</td>
+                            <td>{{ payment.purchased_currency }}</td>
+                            <td>{{ payment.payment_method }}</td>
+                            <td>{{ payment.get_transaction_type_display }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center">No payment history available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

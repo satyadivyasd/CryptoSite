@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Currency, StockData, Payment, Profile,UserProfile
+from .models import Currency, StockData, Profile, Feedback, PaymentHistory
 
 # Import the Currency model from your models.py file
 
@@ -7,4 +7,6 @@ from .models import Currency, StockData, Payment, Profile,UserProfile
 admin.site.register(Currency)
 admin.site.register(StockData)
 admin.site.register(Profile)
-admin.site.register(Payment)
+
+admin.site.register(Feedback)
+admin.site.register(PaymentHistory)

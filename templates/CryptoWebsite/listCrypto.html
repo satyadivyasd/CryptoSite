@@ -1,0 +1,95 @@
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block title %}Owned Stocks{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h3 class="display-4 text-center mt-5 mb-4">Crypto Currencies You Own!!</h3>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if success %}
+            <div class="alert alert-success" role="alert">
+                {{ success }}
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="table-responsive"
+                     {% if crypto|length > 4 %}style="max-height: 400px; overflow-y: auto;"{% endif %}>
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Stock Name</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price per Quantity</th>
+                        </tr>
+                        </thead>
+                        <tbody class="scrollable-tbody">
+                        {% for crypto in purchased_cryptos %}
+                            <tr class="clickable-row" data-crypto-details='{
+                                        "stock_name": "{{ crypto.stock_name }}",
+                                        "purchase_date": "{{ crypto.payment_date }}",
+                                        "quantity": "{{ crypto.updated_quantity }}",
+                                        "price_per_unit": "{{ crypto.purchase_price_per_unit }}",
+                                        "total_amount": "{{ crypto.updated_total_amount }}",
+                                        "currency": "{{ crypto.purchased_currency }}",
+                                        "action_url": "{% url 'sell_crypto' crypto.id %}"
+                                        }'>
+                                <td>{{ crypto.stock_name }}</td>
+                                <td>{{ crypto.updated_quantity }}</td>
+                                <td>{{ crypto.purchase_price_per_unit }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3">No payment history available.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div id="crypto-details">
+                    <!-- Details of the selected crypto will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const rows = document.querySelectorAll(".clickable-row");
+            rows.forEach((row) => {
+                row.addEventListener("click", function () {
+                    const cryptoDetails = JSON.parse(row.getAttribute('data-crypto-details'));
+                    const detailsHtml = `
+                        <h4>${cryptoDetails.stock_name}</h4>
+                        <p><strong>Purchase Date:</strong> ${cryptoDetails.purchase_date}</p>
+                        <p><strong>Quantity:</strong> ${cryptoDetails.quantity}</p>
+                        <p><strong>Price per Unit:</strong> ${cryptoDetails.price_per_unit}</p>
+                        <p><strong>Total Amount:</strong> ${cryptoDetails.total_amount}</p>
+                        <p><strong>Currency:</strong> ${cryptoDetails.currency}</p>
+                        <a href="${cryptoDetails.action_url}" class="btn btn-primary">Sell</a>
+                    `;
+                    document.getElementById("crypto-details").innerHTML = detailsHtml;
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .table-container {
+            max-height: 400px; /* Change this value as needed */
+            overflow-y: auto;
+        }
+    </style>
+{% endblock %}

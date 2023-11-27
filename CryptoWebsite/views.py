@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import authenticate, login, logout
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 import plotly.express as px
@@ -11,9 +12,11 @@ import requests
 from django.shortcuts import render
 
 from django.urls import reverse
-from .models import StockData, Currency, Payment,Profile
+
+from django import forms
+from .models import StockData, Currency, Profile, PaymentHistory
 from django.contrib.auth.decorators import login_required
-from .forms import RegistrationForm, PaymentForm, FeedbackForm, ContactForm, UserProfileForm
+from .forms import RegistrationForm, FeedbackForm, ContactForm, UserProfileForm, SellCryptoForm,MakePaymentForm
 from django.shortcuts import render, redirect
 
 
@@ -133,7 +136,6 @@ def update_profile(request):
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
             form.save()
-            # Refresh the user_profile variable with the updated data
             user_profile = Profile.objects.get(user=request.user)
     else:
         form = UserProfileForm(instance=user_profile)
@@ -149,7 +151,7 @@ def user_login(request):
 
         if user:
             login(request, user)
-            return HttpResponseRedirect(reverse('home'))  # Redirect to the user's account page after login
+            return HttpResponseRedirect(reverse('home'))
         else:
             return render(request, 'CryptoWebsite/login.html', {'error': 'Invalid login credentials.'})
     else:
@@ -161,8 +163,7 @@ def contact_view(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
-            # You can add additional logic here, such as sending emails.
-            return redirect('home')  # Redirect to a success page
+            return redirect('home')
     else:
         form = ContactForm()
 
@@ -173,94 +174,16 @@ def user_logout(request):
     logout(request)
     return redirect('home')
 
-
-@login_required
-def myaccount(request):
-    user_profile = request.user.userprofile
-
-    return render(request, 'CryptoWebsite/userprofile.html', {'user_profile': user_profile})
-
-
-# def data(request):
-#     # CoinMarketCap API endpoint for cryptocurrency listings
-#     api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
-#     # Add your CoinMarketCap API key here
-#     api_key = '3ebb690c-aa21-4b14-bcd7-c84b1b48420e'
-#     # Define parameters for the API request
-#     params = {
-#         'start': '1',
-#         'limit': '10',
-#         'convert': 'USD'
-#     }
-#     # Set headers, including the API key
-#     headers = {
-#         'Accepts': 'application/json',
-#         'X-CMC_PRO_API_KEY': api_key,
-#     }
-#     # Make the API request
-#     response = requests.get(api_url, headers=headers, params=params)
-#     if response.status_code == 200:
-#         # Parse the JSON response
-#         data = response.json()
-#         # Extract relevant information from the response
-#
-#         cryptocurrencies = [
-#             {
-#                 'name': crypto['name'],
-#                 'symbol': crypto['symbol'],
-#                 'price': '${:,.2f}'.format(crypto['quote']['USD']['price']),
-#                 'market_cap': '${:,.2f}'.format(crypto['quote']['USD']['market_cap']),
-#                 'change_percentage': '{:.2f}'.format(crypto['quote']['USD']['percent_change_24h']),
-#                 'volume_24h': crypto['quote']['USD']['volume_24h'],
-#                 "volume_change_24h": crypto['quote']['USD']['volume_change_24h'],
-#                 "percent_change_1h": crypto['quote']['USD']['percent_change_1h'],
-#                 "percent_change_24h": crypto['quote']['USD']['percent_change_24h'],
-#                 "percent_change_7d": crypto['quote']['USD']['percent_change_7d'],
-#                 "percent_change_30d": crypto['quote']['USD']['percent_change_30d'],
-#                 "percent_change_60d": crypto['quote']['USD']['percent_change_60d'],
-#                 "percent_change_90d": crypto['quote']['USD']['percent_change_90d'],
-#
-#             }
-#             for crypto in data['data']
-#         ]
-#         for crypto in cryptocurrencies:
-#             StockData.objects.create(
-#                 name=crypto['name'],
-#                 symbol=crypto['symbol'],
-#                 price=Decimal(crypto['price'].replace('$', '').replace(',', '')),
-#                 market_cap=Decimal(crypto['market_cap'].replace('$', '').replace(',', '')),
-#                 change_percentage=Decimal(crypto['change_percentage']),
-#                 volume_24h=Decimal(crypto['volume_24h']),
-#                 volume_change_24h=Decimal(crypto['volume_change_24h']),
-#                 lasthour=Decimal(crypto['percent_change_1h']),
-#                 last24h=Decimal(crypto['percent_change_24h']),
-#                 week=Decimal(crypto['percent_change_7d']),
-#                 month=Decimal(crypto['percent_change_30d']),
-#                 TwoMonths=Decimal(crypto['percent_change_60d']),
-#                 ThreeMonths=Decimal(crypto['percent_change_90d']),
-#             )
-#         print(cryptocurrencies)
-#
-#     else:
-#         # If the API request fails, provide some default data or handle the error as needed
-#         cryptocurrencies = [
-#             {"name": "Bitcoin", "symbol": "BTC", "price": "$60,000", "market_cap": "$1.2 Trillion",
-#              "change_percentage": "+5"},
-#             # Add more default cryptocurrencies as needed
-#         ]
-#     print(cryptocurrencies)
-#     return render(request, 'CryptoWebsite/home.html', {'cryptocurrencies': cryptocurrencies})
-
 def stocks(request):
     # CoinMarketCap API endpoint for cryptocurrency listings
     api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
     # Add your CoinMarketCap API key here
     api_key = '3ebb690c-aa21-4b14-bcd7-c84b1b48420e'
-
+    search_query = request.GET.get('search', None)
     # Define parameters for the API request
     params = {
         'start': '1',
-        'limit': '20',
+        'limit': '100',
         'convert': 'USD'
     }
 
@@ -294,7 +217,25 @@ def stocks(request):
                 "percent_change_90d": crypto['quote']['USD']['percent_change_90d'],
             }
             for crypto in data['data']
+
         ]
+        paginator = Paginator(cryptocurrencies, 10)  # Change the number to control items per page
+        page = request.GET.get('page', 1)
+
+        try:
+            cryptocurrencies = paginator.page(page)
+        except PageNotAnInteger:
+            cryptocurrencies = paginator.page(1)
+        except EmptyPage:
+            cryptocurrencies = paginator.page(paginator.num_pages)
+
+        top_gainers = sorted(cryptocurrencies, key=lambda x: x['percent_change_24h'], reverse=True)[:5]
+        top_losers = sorted(cryptocurrencies, key=lambda x: x['percent_change_24h'])[:5]
+
+        show_top_gainers_and_losers = request.GET.get('show_top_gainers_and_losers', False)
+        if search_query:
+            search_query = search_query.lower()
+            cryptocurrencies = [crypto for crypto in cryptocurrencies if search_query in crypto['name'].lower()]
     else:
         # If the API request fails, provide some default data or handle the error as needed
         cryptocurrencies = [
@@ -319,36 +260,8 @@ def stocks(request):
             ThreeMonths=Decimal(crypto['percent_change_90d']),
 
         )
-    return render(request, 'CryptoWebsite/stocks.html', {'cryptocurrencies': cryptocurrencies})
-
-
-def make_payment(request):
-    if request.method == 'POST':
-        form = PaymentForm(request.POST)
-        if form.is_valid():
-            # Process the payment and save payment details
-            user = request.user
-            amount = form.cleaned_data['amount']
-            currency = form.cleaned_data['currency']
-            card_number = form.cleaned_data['card_number']
-            expiration_date = form.cleaned_data['expiration_date']
-            cvv = form.cleaned_data['cvv']
-
-            # Perform payment processing logic here (e.g., using a payment gateway API)
-
-            # Save payment details in the database
-            payment = Payment.objects.create(
-                user=user,
-                amount=amount,
-                currency=currency,
-                transaction_id='123456',  # Replace with actual transaction ID from payment gateway
-            )
-
-            return render(request, 'CryptoWebsite/payment_success.html', {'payment': payment})
-    else:
-        form = PaymentForm()
-
-    return render(request, 'CryptoWebsite/make_payment.html', {'form': form})
+    return render(request, 'CryptoWebsite/stocks.html',
+                  {'cryptocurrencies': cryptocurrencies, 'top_gainers': top_gainers, 'top_losers': top_losers})
 
 
 def feedback_view(request):
@@ -356,11 +269,12 @@ def feedback_view(request):
         form = FeedbackForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'CryptoWebsite/thank_you.html')  # Create a thank you page
+            return render(request, 'CryptoWebsite/home.html')  # Create a thank you page
     else:
         form = FeedbackForm()
 
     return render(request, 'CryptoWebsite/feedback_form.html', {'form': form})
+
 
 # def contact(request):
 #     if request.method=="POST":
@@ -369,3 +283,101 @@ def feedback_view(request):
 #
 #     return HTTPResponse("<h1> THANKS FOR CONTACTING US</h1>")
 # return render(request,'contact.html')
+def list_purchased_cryptos(request):
+    purchased_cryptos = PaymentHistory.objects.filter(user=request.user, status='A')
+    return render(request, 'CryptoWebsite/listCrypto.html', {'purchased_cryptos': purchased_cryptos})
+
+
+def sell_crypto(request, crypto_id):
+    crypto = get_object_or_404(PaymentHistory, pk=crypto_id, user=request.user, status='A')
+    if request.method == 'POST':
+        form = SellCryptoForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            quantity_to_sell = form.cleaned_data['quantity']
+            amount_per_quantity = form.cleaned_data['price_per_unit']
+
+            if quantity_to_sell > crypto.updated_quantity:
+                error_message = "Quantity to sell exceeds available quantity."
+                return render(request, 'CryptoWebsite/sellCrypto.html', {'form': form,
+                                                                         'crypto': crypto,
+                                                                         'error_message': error_message})
+
+            if amount_per_quantity > 2 * crypto.total_purchase_amount:
+                error_message = "Price per unit exceeds twice the purchase amount."
+                return render(request, 'CryptoWebsite/sellCrypto.html', {'form': form,
+                                                                         'crypto': crypto,
+                                                                         'error_message': error_message})
+
+            # Create a new PaymentHistory record for the sale
+            sold_crypto = PaymentHistory.objects.create(
+                user=request.user,
+                stock_name=crypto.stock_name,
+                quantity_purchased=quantity_to_sell,
+                purchased_currency=crypto.purchased_currency,
+                purchase_price_per_unit=amount_per_quantity,
+                total_purchase_amount=quantity_to_sell * amount_per_quantity,
+                payment_method=crypto.payment_method,
+                status='I',
+                transaction_type='S'
+            )
+            available_Cryptos = crypto.updated_quantity - quantity_to_sell
+            if available_Cryptos == 0:
+                crypto.updated_quantity = available_Cryptos
+                crypto.status = 'I'
+                crypto.save()
+            else:
+                crypto.updated_quantity = available_Cryptos
+                crypto.updated_total_amount = available_Cryptos * crypto.purchase_price_per_unit
+                crypto.save()
+
+            messages.success(request,
+                             'Stock has been sold successfully. Please check in payment history tab for more details.')
+            messages.get_messages(request).used = True
+            return redirect('list_purchased_cryptos')  # Redirect to a success page
+    else:
+        form = SellCryptoForm(
+            initial={'quantity': crypto.updated_quantity, 'price_per_unit': crypto.purchase_price_per_unit})
+
+    return render(request, 'CryptoWebsite/sellCrypto.html', {'form': form,
+                                                             'crypto': crypto,
+                                                             'crypt_name': crypto.stock_name,
+                                                             'crypto_currency': crypto.purchased_currency,
+                                                             'quantity_available': crypto.updated_quantity,
+                                                             'price_per_unit': crypto.purchase_price_per_unit})
+
+def pay_now(request, stock_name):
+    stock_data = StockData.objects.filter(name=stock_name).first()
+    if request.method == 'POST':
+        print('inside post request')
+        form = MakePaymentForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            quantity_purchased = form.cleaned_data['quantity_purchased']
+            purchased_currency = form.cleaned_data['purchased_currency']
+            payment_method = form.cleaned_data['payment_method']
+            crypto = PaymentHistory.objects.create(
+                user=request.user,
+                stock_name=stock_data.name,
+                quantity_purchased=quantity_purchased,
+                updated_quantity=quantity_purchased,
+                purchased_currency=purchased_currency,
+                purchase_price_per_unit=stock_data.price,
+                total_purchase_amount=quantity_purchased * stock_data.price,
+                updated_total_amount=quantity_purchased * stock_data.price,
+                payment_method=payment_method,
+                status='A',
+                transaction_type='B'
+            )
+            # context = {'form': form }
+            return redirect('list_purchased_cryptos')
+    else:
+        form = MakePaymentForm(initial={'stock_name': stock_data.name, 'purchased_currency': 'USD', 'purchase_price_per_unit': stock_data.price})
+
+    print('before render')
+    return render(request, 'CryptoWebsite/make_payment.html', {'form': form, 'stock_name': stock_name, 'price': stock_data.price, })
+
+
+def paymentHistory(request):
+    paymentHistory = PaymentHistory.objects.filter(user=request.user.id)
+    return render(request, 'CryptoWebsite/paymentHistory.html', {'paymentHistoryDetails': paymentHistory})

@@ -1,3 +1,78 @@
+{#<!DOCTYPE html>#}
+{#{% load static %}#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>{% block title %}Home{% endblock %}</title>#}
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" >#}
+{#</head>#}
+{##}
+{#<body class="d-flex flex-column min-vh-100">#}
+{#<nav class="navbar navbar-expand-lg navbar-dark "style="background-color: darkslateblue">#}
+{#  <a class="navbar-brand" href="#">Crypto Geek</a>#}
+{#  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">#}
+{#    <span class="navbar-toggler-icon"></span>#}
+{#  </button>#}
+{#  <div class="collapse navbar-collapse" id="navbarText">#}
+{#    <ul class="navbar-nav mr-auto">#}
+{#      <li class="nav-item active">#}
+{#        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>#}
+{#      </li>#}
+{#      <li class="nav-item">#}
+{#        <a class="nav-link" href="/stocks">Explore</a>#}
+{#      </li>#}
+{#    </ul>#}
+{#    <span class="navbar-text">#}
+{##}
+{##}
+{#    {% if user.is_authenticated %}#}
+{#        <div class="dropdown">#}
+{#            <button class="btn rounded-circle dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#                <img src="https://icon-library.com/images/free-avatar-icon/free-avatar-icon-10.jpg" alt="User Avatar" class="avatar-img rounded-circle" style="width: 1cm; height: 1cm;">#}
+{#            </button>#}
+{#            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">#}
+{#                <a class="dropdown-item rounded" href='/myprofile' style="color: black">My Profile</a>#}
+{#                <a class="dropdown-item rounded" href='/paymentHistory' style="color: black">Payment History</a>#}
+{#                <a class="dropdown-item rounded" href="/feedback" style="color: black;">feedback</a>#}
+{#                <a class="dropdown-item rounded" href="/logout" style="color: black;">Logout</a>#}
+{##}
+{#            </div>#}
+{#        </div>#}
+{#    {% else %}#}
+{#        <a href="/login" class="btn btn-primary rounded">Signin</a>#}
+{#        <a href="/register" class="btn btn-primary rounded">Signup</a>#}
+{#    {% endif %}#}
+{#</span>#}
+{##}
+{##}
+{##}
+{#  </div>#}
+{#</nav>#}
+{##}
+{#    <!-- Link Bootstrap JS (optional, for dropdown functionality) -->#}
+{##}
+{#    <div class="flex-grow-1" style="width: fit-content">#}
+{#        <!-- This div will take up the remaining height of the viewport -->#}
+{#        {% block content %}#}
+{#            <!-- Default content for child templates goes here -->#}
+{#        {% endblock %}#}
+{#    </div>#}
+{#    <footer style="flex-shrink: inherit;background-color: darkslateblue;text-align: center;color: white;height: 50px;margin-top: 350px;display:flex">#}
+{#        <a class="dropdown-item rounded" href="/contact" style="color: black;">Contact Us</a>#}
+{#        <a class="dropdown-item rounded" href="/about" style="color: black;">About Us</a>#}
+{#    </footer>#}
+{##}
+{##}
+{##}
+{#</body>#}
+{##}
+{# <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>#}
+{#    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>#}
+{#    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>#}
+{#</html>#}
+{##}
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -39,6 +114,7 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                 <a class="dropdown-item rounded" href='/myprofile' style="color: black">My Profile</a>
+                <a class="dropdown-item rounded" href='/paymentHistory' style="color: black">Payment History</a>
                 <a class="dropdown-item rounded" href="/feedback" style="color: black;">feedback</a>
                 <a class="dropdown-item rounded" href="/logout" style="color: black;">Logout</a>
 
@@ -54,13 +130,7 @@
 
   </div>
 </nav>
-
-    <!-- Link Bootstrap JS (optional, for dropdown functionality) -->
-
-{#    <div class="flex-grow-1" style="width: fit-content">#}
-        <!-- This div will take up the remaining height of the viewport -->
         {% block content %}
-            <!-- Default content for child templates goes here -->
         {% endblock %}
 {#    </div>#}
     <footer style="flex-shrink: inherit;background-color: darkslateblue;text-align: center;color: white;height: 50px;margin-top: 350px;display:flex">

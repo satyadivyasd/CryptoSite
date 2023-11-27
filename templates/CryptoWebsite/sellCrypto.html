@@ -1,0 +1,86 @@
+{% extends 'CryptoWebsite/base.html' %}
+
+{% block title %}Owned Stocks{% endblock %}
+
+{% block content %}
+<style>
+    /* CSS for form alignment */
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-top: 5px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="display-4 text-center mt-5 mb-4">Sell Crypto: <b>{{ crypt_name }}</b></h1>
+
+        <h5>Note: You have {{ crypto.updated_quantity }} available quantity at {{ crypto.purchase_price_per_unit }} {{ crypto.purchased_currency }} price per unit to sell.</h5>
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_quantity" class="form-label">Quantity:</label>
+                        {{ form.quantity }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_amount" class="form-label">Price per Unit:</label>
+                        {{ form.price_per_unit }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_total_purchase_value" class="form-label">Total Purchase Value:</label>
+                        <input type="text" id="id_total_purchase_value" name="total_purchase_value" readonly>
+                    </div>
+                </div>
+            </div>
+            {% if error_message %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary">Sell</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quantityField = document.getElementById('{{ form.quantity.auto_id }}');
+            const priceField = parseFloat("{{ form.price_per_unit.value }}");
+            const totalPurchaseValueField = document.getElementById('id_total_purchase_value');
+
+            quantityField.addEventListener('input', function () {
+                const quantity = parseFloat(quantityField.value);
+                const totalAmount = isNaN(quantity) ? 0 : (quantity * priceField);
+                totalPurchaseValueField.value = totalAmount.toFixed(2);
+            });
+        });
+    </script>
+</body>
+{% endblock %}

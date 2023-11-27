@@ -1,22 +1,140 @@
-<!DOCTYPE html>
-<html lang="en">
-
 {% extends 'CryptoWebsite/base.html' %}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
-{#    <title>Make Payment</title>#}
-{#</head>#}
-{#<body>#}
-{#    <h1>Make Payment</h1>#}
-{#
-{#    </form>#}
-{#</body>#}
-{#</html>#}
+
+{% block title %}Make Payment{% endblock %}
+
 {% block content %}
- <form method="post" action="{% url 'make_payment' %}">
-     {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit Payment</button>
- </form>
+
+<style>
+    /* CSS for form alignment */
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-top: 5px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 10px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="display-4 text-center mt-5 mb-4">Make Payment</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="id_quantity" class="form-label">Quantity:</label>
+                    {{ form.quantity_purchased }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.stock_name.id_for_label }}" class="form-label">Stock Name:</label>
+                    {{ form.stock_name }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.purchased_currency.id_for_label }}" class="form-label">Purchased
+                        Currency:</label>
+                    {{ form.purchased_currency }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="id_cost_per_unit" class="form-label">Cost per Unit:</label>
+                    {{ form.purchase_price_per_unit }}
+                </div>
+                <div class="form-group">
+                    <label for="id_total_purchase_value" class="form-label">Total Purchase Value:</label>
+                    <input type="text" id="id_total_purchase_value" name="total_purchase_value" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="id_payment_method" class="form-label">Payment Method:</label>
+                    {{ form.payment_method }}
+                </div>
+                <div id="cardDetails" style="display: none;">
+                    <div class="form-group">
+                        <label for="id_card_number" class="form-label">Card Number:</label>
+                        <input type="text" id="id_card_number" name="card_number">
+                        <small class="text-danger" id="cardNumberError" style="display: none;">Please enter a valid
+                                16-digit card number.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_card_holder_name" class="form-label">Card Holder Name:</label>
+                        <input type="text" id="id_card_holder_name" name="card_holder_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_cvv" class="form-label">CVV:</label>
+                        <input type="password" id="id_cvv" name="cvv" maxlength="3">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_expiry_date" class="form-label">Expiry Date:</label>
+                        <input type="month" id="expiry_date" name="expiry_date" placeholder="MM/YY"
+                                   pattern="\d{2}/\d{2}">
+                    </div>
+                    <!-- You can add more card details fields as needed -->
+                </div>
+            </div>
+        </div>
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_message }}
+            </div>
+        {% endif %}
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary">Make Payment</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantityField = document.getElementById('{{ form.quantity_purchased.auto_id }}');
+        const priceField = parseFloat("{{ price }}");
+        const totalPurchaseValueField = document.getElementById('id_total_purchase_value');
+        const paymentMethodField = document.getElementById('{{ form.payment_method.auto_id }}');
+        const cardDetails = document.getElementById('cardDetails');
+        const cardNumberField = document.getElementById('id_card_number');
+        const cardNumberError = document.getElementById('cardNumberError');
+
+        quantityField.addEventListener('input', function () {
+            const quantity = parseFloat(quantityField.value);
+            const totalAmount = isNaN(quantity) ? 0 : (quantity * priceField);
+            totalPurchaseValueField.value = totalAmount.toFixed(2);
+        });
+
+        cardNumberField.addEventListener('input', function () {
+                const cardNumber = cardNumberField.value.replace(/\s/g, '');
+                if (/^\d{16}$/.test(cardNumber)) {
+                    cardNumberError.style.display = 'none';
+                } else {
+                    cardNumberError.style.display = 'block';
+                }
+            });
+
+        paymentMethodField.addEventListener('change', function () {
+            if (paymentMethodField.value === 'CARD') {
+                cardDetails.style.display = 'block';
+            } else {
+                cardDetails.style.display = 'none';
+            }
+        });
+    });
+</script>
+
 {% endblock %}

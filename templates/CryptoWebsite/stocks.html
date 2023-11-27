@@ -1,4 +1,5 @@
 {% extends 'CryptoWebsite/base.html' %}
+{% load static %}
 
 {% block title %}StockInfo{% endblock %}
 
@@ -8,16 +9,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cryptocurrency Website</title>
     <style>
+    .highlights-bar {
+            display: flex;
+            justify-content: space-evenly;
+            margin-left: 100px;
+            padding:  20px  ;
+        }
+
+        .highlights-box {
+            {#border: 10px darkolivegreen;#}
+            padding: 10px;
+            width: 70%;
+        }
+
+        .gainers{
+
+             margin-left: 50px;
+
+        }
+        .losers {
+
+            margin-bottom: 10px;
+            margin-left: 50px;
+            margin-right:100px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            {#background-color: #f5f5f5;#}
         }
 
         header {
-            background-color: #2d2d2d;
-            color: #ffffff;
+            {#background-color: #2d2d2d;#}
+            {#color: #ffffff;#}
             padding: 20px;
             text-align: center;
         }
@@ -29,14 +64,14 @@
         }
 
         th, td {
-            border: 1px solid #dddddd;
+            {#border: 1px solid #dddddd;#}
             text-align: left;
             padding: 8px;
         }
 
         th {
-            background-color: steelblue;
-            color: #ffffff;
+            background-color: mistyrose;
+            {#color: #ffffff;#}
         }
 
         section {
@@ -44,37 +79,76 @@
         }
 
         .crypto-card {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin: 10px;
             padding: 20px;
         }
 
         footer {
-            background-color: #2d2d2d;
-            color: #ffffff;
             padding: 10px;
             text-align: center;
         }
     </style>
+{#    <link href="https://bootswatch.com/5/quartz/bootstrap.min.css" rel="stylesheet" type="text/css">#}
 </head>
 <body>
 
+{##}
+{#    <div class="highlights-bar" >#}
+{#        <div class="gainers">#}
+{#            <h3>Top Gainers ↑</h3>#}
+{#            <ul>#}
+{#                {% for crypto in top_gainers %}#}
+{#                    <li>{{ crypto.name }} (+{{ crypto.change_percentage }}%)</li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        </div>#}
+{#        <div class="losers">#}
+{#            <h3>Top Losers ↓</h3>#}
+{#            <ul>#}
+{#                {% for crypto in top_losers %}#}
+{#                    <li>{{ crypto.name }} ({{ crypto.change_percentage }}%)</li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        </div>#}
+{#    </div>#}
+    <div class="highlights-bar">
+    <div class="card text-white bg-success mb-3"  style="max-width: 40rem;">
+        <div class="card-header">Top Gainers ↑</div>
+        <div class="card-body">
+            <ul>
+                {% for crypto in top_gainers %}
+                    <li>{{ crypto.name }} (+{{ crypto.change_percentage }}%)</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="card text-white bg-success mb-3" style="max-width: 40rem;">
+        <div class="card-header">Top Losers ↓</div>
+        <div class="card-body">
+            <ul>
+                {% for crypto in top_losers %}
+                    <li>{{ crypto.name }} ({{ crypto.change_percentage }}%)</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
     <section>
-        <table>
+        <table class="table table-hover">
             <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Symbol</th>
-                    <th>Price</th>
-                    <th>Market Cap</th>
-                    <th>24h Change</th>
+                <tr class="table-secondary">
+                    <th scope="col">Name</th>
+                    <th scope="col">Symbol</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Market Cap</th>
+                    <th scope="col">24h Change</th>
                 </tr>
             </thead>
             <tbody>
                 {% for crypto in cryptocurrencies %}
-                    <tr>
+                    <tr class="table-active">
                         <td><a href="{% url 'stockinfo' stockname=crypto.name %}">{{ crypto.name }}</a></td>
                         <td>{{ crypto.symbol }}</td>
                         <td>{{ crypto.price }}</td>
@@ -85,6 +159,39 @@
             </tbody>
         </table>
     </section>
+    <div class="pagination">
+        <span class="step-links">
+            {% if cryptocurrencies.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ cryptocurrencies.previous_page_number }}">previous</a>
+            {% endif %}
 
+            <span class="current">
+                Page {{ cryptocurrencies.number }} of {{ cryptocurrencies.paginator.num_pages }}.
+            </span>
 
+            {% if cryptocurrencies.has_next %}
+                <a href="?page={{ cryptocurrencies.next_page_number }}">next</a>
+                <a href="?page={{ cryptocurrencies.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+{#    <div class="btn-group" role="group" aria-label="Stock_pages">#}
+{#    {% if cryptocurrencies.has_previous %}#}
+{#        <a href="?page=1" class="btn btn-secondary">&laquo; first</a>#}
+{#        <a href="?page={{ cryptocurrencies.previous_page_number }}" class="btn btn-secondary">previous</a>#}
+{#    {% endif %}#}
+{##}
+{#    <span class="btn btn-secondary disabled">#}
+{#        Page {{ cryptocurrencies.number }} of {{ cryptocurrencies.paginator.num_pages }}.#}
+{#    </span>#}
+{##}
+{#    {% if cryptocurrencies.has_next %}#}
+{#        <a href="?page={{ cryptocurrencies.next_page_number }}" class="btn btn-secondary">next</a>#}
+{#        <a href="?page={{ cryptocurrencies.paginator.num_pages }}" class="btn btn-secondary">last &raquo;</a>#}
+{#    {% endif %}#}
+{#</div>#}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 {% endblock %}
